@@ -8,7 +8,7 @@ namespace Importer.DMI
 {
     public record DmiState(string Name, DirectionType Directions = DirectionType.None, int Frames = 1, List<float>? Delay = null)
     {
-        public RsiState ToRsiState(RsiSize size, Image<Rgba32>[,] frames)
+        public RsiState ToRsiState(Image<Rgba32>[,] frames)
         {
             var delays = new List<List<float>>();
 
@@ -20,7 +20,7 @@ namespace Importer.DMI
                 }
             }
 
-            return new RsiState(Name, Directions, delays, size: size, frames: frames);
+            return new RsiState(Name, Directions, delays, frames: frames);
         }
     }
 }

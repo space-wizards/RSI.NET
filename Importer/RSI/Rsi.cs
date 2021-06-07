@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Importer.RSI
 {
@@ -55,11 +56,32 @@ namespace Importer.RSI
         [JsonPropertyName("copyright")]
         public string? Copyright { get; set; }
 
+        public async Task LoadFolderImages(string rsiFolder)
+        {
+            if (!Directory.Exists(rsiFolder))
+            {
+                return;
+            }
+
+            foreach (var state in States)
+            {
+                var fileName = $"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png";
+
+                if (!File.Exists(fileName))
+                {
+                    continue;
+                }
+
+                var image = await Image.LoadAsync<Rgba32>(fileName);
+                state.LoadImage(image, Size);
+            }
+        }
+
         public async Task SaveTo(string rsiFolder)
         {
             foreach (var state in States)
             {
-                var image = state.GetFullImage();
+                var image = state.GetFullImage(Size);
 
                 await image.SaveAsync($"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png");
             }

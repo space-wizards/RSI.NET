@@ -22,7 +22,6 @@ namespace Importer.RSI
             DirectionType directions = DirectionType.None,
             List<List<float>>? delays = null,
             Dictionary<object, object>? flags = null,
-            RsiSize? size = null,
             Image<Rgba32>[,]? frames = null,
             string? invalidCharacterReplace = "_")
         {
@@ -35,12 +34,25 @@ namespace Importer.RSI
             Directions = directions;
             Delays = delays;
             Flags = flags;
-            Size = size ?? new RsiSize(32, 32);
 
             DelayLength = Delays is {Count: > 0} ? Delays[0].Count : 1;
             Frames = frames ?? new Image<Rgba32>[8, DelayLength];
 
             Guard.IsEqualTo(Frames.Length, 8 * DelayLength, "Frames.Length");
+        }
+
+        [JsonConstructor]
+        public RsiState(
+            string name,
+            DirectionType directions = DirectionType.None,
+            List<List<float>>? delays = null,
+            Dictionary<object, object>? flags = null)
+            : this (name, directions, delays, flags, null, null)
+        {
+        }
+
+        public RsiState(string name = "") : this(name, DirectionType.None, null, null)
+        {
         }
 
         [JsonPropertyName("name")]
@@ -59,9 +71,6 @@ namespace Importer.RSI
         public int DelayLength { get; private set; }
 
         [JsonIgnore]
-        public RsiSize Size { get; private set; }
-
-        [JsonIgnore]
         public Image<Rgba32>?[,] Frames { get; private set; }
 
         public static (int rows, int columns) GetRowsAndColumns(int images)
@@ -73,11 +82,11 @@ namespace Importer.RSI
             return (rows, columns);
         }
 
-        public Image<Rgba32> GetFullImage()
+        public Image<Rgba32> GetFullImage(RsiSize size)
         {
             var totalImages = Frames.Cast<Image<Rgba32>>().Count(x => x != null);
             var (rows, columns) = GetRowsAndColumns(totalImages);
-            var image = new Image<Rgba32>(Size.X * columns, Size.Y * rows);
+            var image = new Image<Rgba32>(size.X * columns, size.Y * rows);
 
             var currentX = 0;
             var currentY = 0;
@@ -92,12 +101,12 @@ namespace Importer.RSI
                 var point = new Point(currentX, currentY);
                 image.Mutate(x => x.DrawImage(frame, point, 1));
 
-                currentX += Size.X;
+                currentX += size.X;
 
                 if (currentX >= image.Width)
                 {
                     currentX = 0;
-                    currentY += Size.Y;
+                    currentY += size.Y;
                 }
             }
 
@@ -158,9 +167,29 @@ namespace Importer.RSI
             return frames;
         }
 
-        public void LoadImage(Image<Rgba32> image)
+        public void LoadImage(Image<Rgba32> image, RsiSize size)
         {
+            var currentX = 0;
+            var currentY = 0;
 
+            for (var direction = 0; direction < (int) Directions; direction++)
+            {
+                for (var frame = 0; frame < DelayLength; frame++)
+                {
+                    var rectangle = new Rectangle(currentX, currentY, size.X, size.Y);
+                    var crop = image.Clone(x => x.Crop(rectangle));
+
+                    Frames[direction, frame] = crop;
+
+                    currentX += size.X;
+
+                    if (currentX >= image.Width)
+                    {
+                        currentX = 0;
+                        currentY += size.Y;
+                    }
+                }
+            }
         }
 
         public void Dispose()
