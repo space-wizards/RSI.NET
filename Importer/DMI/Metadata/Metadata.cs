@@ -54,7 +54,7 @@ namespace Importer.DMI.Metadata
                     }
                 }
 
-                var rsiState = dmiState.ToRsiState(size, images);
+                var rsiState = dmiState.ToRsiState(images);
                 rsiStates.Add(rsiState);
             }
 
