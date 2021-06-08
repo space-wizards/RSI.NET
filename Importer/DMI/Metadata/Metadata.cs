@@ -33,7 +33,8 @@ namespace Importer.DMI.Metadata
 
             foreach (var dmiState in States)
             {
-                var images = new Image<Rgba32>[8, dmiState.Frames];
+                var frameAmount = dmiState.Delay?.Count ?? 1;
+                var images = new Image<Rgba32>[8, frameAmount];
 
                 for (var frame = 0; frame < dmiState.Frames; frame++)
                 {
@@ -50,6 +51,18 @@ namespace Importer.DMI.Metadata
                         {
                             currentX = 0;
                             currentY += size.Y;
+                        }
+                    }
+                }
+
+                if (dmiState.Rewind)
+                {
+                    for (var frame = frameAmount - 1; frame >= dmiState.Frames; frame--)
+                    {
+                        for (var direction = 0; direction < (int) dmiState.Directions; direction++)
+                        {
+                            var rewindIndex = DmiState.GetRewindIndex(frame, dmiState.Frames);
+                            images[direction, frame] = images[direction, rewindIndex].Clone();
                         }
                     }
                 }

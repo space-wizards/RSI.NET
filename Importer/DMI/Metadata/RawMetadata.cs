@@ -177,6 +177,9 @@ namespace Importer.DMI.Metadata
 
                         state = state with {Delay = delays};
                         break;
+                    case "rewind":
+                        state = state with {Rewind = true};
+                        break;
                 }
 
                 if (key == "state")
