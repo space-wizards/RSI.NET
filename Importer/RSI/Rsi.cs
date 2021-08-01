@@ -24,19 +24,19 @@ namespace Importer.RSI
             string? copyright = null)
         {
             Version = version;
-            Size = size;
-            States = states ?? new List<RsiState>();
             License = license;
             Copyright = copyright;
+            Size = size;
+            States = states ?? new List<RsiState>();
         }
 
         public Rsi(
             double version = CurrentRsiVersion,
+            string? license = null,
+            string? copyright = null,
             int x = 32,
             int y = 32,
-            List<RsiState>? states = null,
-            string? license = null,
-            string? copyright = null)
+            List<RsiState>? states = null)
             : this(version, new RsiSize(x, y), states?.ToList(), license, copyright)
         {
         }
@@ -44,17 +44,17 @@ namespace Importer.RSI
         [JsonPropertyName("name")]
         public double Version { get; set; }
 
-        [JsonPropertyName("size")]
-        public RsiSize Size { get; }
-
-        [JsonPropertyName("states")]
-        public List<RsiState> States { get; set; }
-
         [JsonPropertyName("license")]
         public string? License { get; set; }
 
         [JsonPropertyName("copyright")]
         public string? Copyright { get; set; }
+
+        [JsonPropertyName("size")]
+        public RsiSize Size { get; }
+
+        [JsonPropertyName("states")]
+        public List<RsiState> States { get; set; }
 
         public async Task LoadFolderImages(string rsiFolder)
         {
