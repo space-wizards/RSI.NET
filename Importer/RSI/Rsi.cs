@@ -41,7 +41,7 @@ namespace Importer.RSI
         {
         }
 
-        [JsonPropertyName("name")]
+        [JsonPropertyName("version")]
         public double Version { get; set; }
 
         [JsonPropertyName("size")]
