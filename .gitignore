@@ -21,3 +21,6 @@ _ReSharper*/
 *.user
 *.userosscache
 *.sln.docstates
+
+# Whatever this is 
+*.dtbcache.v2
