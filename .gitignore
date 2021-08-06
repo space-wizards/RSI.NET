@@ -15,3 +15,12 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 /_ReSharper.Caches/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Whatever this is 
+*.dtbcache.v2
