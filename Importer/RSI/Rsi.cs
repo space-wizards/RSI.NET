@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using SixLabors.ImageSharp;
@@ -56,7 +58,28 @@ namespace Importer.RSI
         [JsonPropertyName("states")]
         public List<RsiState> States { get; set; }
 
-        public async Task LoadFolderImages(string rsiFolder)
+        public static async Task<Rsi> FromFolder(
+            string rsiFolder,
+            JsonSerializerOptions? options = null,
+            CancellationToken token = default)
+        {
+            var metaJsonPath = $"{rsiFolder}{Path.DirectorySeparatorChar}meta.json";
+            await using var metaJsonStream = File.OpenRead(metaJsonPath);
+
+            return await FromMetaJson(metaJsonStream, options, token);
+        }
+
+        public static async Task<Rsi> FromMetaJson(
+            Stream metaJson,
+            JsonSerializerOptions? options = null,
+            CancellationToken token = default)
+        {
+            var rsi = await JsonSerializer.DeserializeAsync<Rsi>(metaJson, options, token);
+
+            return rsi ?? throw new NullReferenceException();
+        }
+
+        public async Task TryLoadFolderImages(string rsiFolder)
         {
             if (!Directory.Exists(rsiFolder))
             {
@@ -77,14 +100,61 @@ namespace Importer.RSI
             }
         }
 
-        public async Task SaveTo(string rsiFolder)
+        public async Task SaveToFolder(string rsiFolder, JsonSerializerOptions? options = null)
+        {
+            Directory.CreateDirectory(rsiFolder);
+
+            await SaveImagesToFolder(rsiFolder);
+            await SaveRsiToFolder(rsiFolder, options);
+        }
+
+        public async Task SaveToStream(Stream stream, JsonSerializerOptions? options = null)
+        {
+            await SaveImagesToStream(stream);
+            await SaveRsiToStream(stream, options);
+        }
+
+        public async Task SaveImagesToFolder(string rsiFolder)
         {
             foreach (var state in States)
             {
                 var image = state.GetFullImage(Size);
+                var path = $"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png";
 
-                await image.SaveAsync($"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png");
+                await image.SaveAsPngAsync(path);
             }
+        }
+
+        public async Task SaveImagesToStream(Stream stream)
+        {
+            foreach (var state in States)
+            {
+                var image = state.GetFullImage(Size);
+                await image.SaveAsPngAsync(stream);
+            }
+
+            await stream.FlushAsync();
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
+        public async Task SaveRsiToFolder(string rsiFolder, JsonSerializerOptions? options = null)
+        {
+            var metaJsonPath = $"{rsiFolder}{Path.DirectorySeparatorChar}meta.json";
+            await File.WriteAllTextAsync(metaJsonPath, string.Empty);
+
+            await using var metaJsonFile = File.OpenWrite(metaJsonPath);
+            await SaveRsiToStream(metaJsonFile, options);
+        }
+
+        public async Task SaveRsiToStream(Stream stream, JsonSerializerOptions? options = null)
+        {
+            options ??= new JsonSerializerOptions();
+            options.Converters.Add(RsiStateConverter.Instance);
+
+            await JsonSerializer.SerializeAsync(stream, this, options);
+            await stream.FlushAsync();
+
+            stream.Seek(0, SeekOrigin.Begin);
         }
 
         public void Dispose()

@@ -21,7 +21,7 @@ namespace Importer.RSI
             string name,
             DirectionType directions = DirectionType.None,
             List<List<float>>? delays = null,
-            Dictionary<object, object>? flags = null,
+            Dictionary<string, object>? flags = null,
             Image<Rgba32>[,]? frames = null,
             string? invalidCharacterReplace = "_")
         {
@@ -46,7 +46,7 @@ namespace Importer.RSI
             string name,
             DirectionType directions = DirectionType.None,
             List<List<float>>? delays = null,
-            Dictionary<object, object>? flags = null)
+            Dictionary<string, object>? flags = null)
             : this (name, directions, delays, flags, null, null)
         {
         }
@@ -65,7 +65,7 @@ namespace Importer.RSI
         public List<List<float>>? Delays { get; set; }
 
         [JsonPropertyName("flags")]
-        public Dictionary<object, object>? Flags { get; set; }
+        public Dictionary<string, object>? Flags { get; set; }
 
         [JsonIgnore]
         public int DelayLength { get; private set; }

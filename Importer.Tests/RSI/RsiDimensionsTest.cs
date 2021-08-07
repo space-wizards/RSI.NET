@@ -1,11 +1,11 @@
 ﻿using Importer.RSI;
 using NUnit.Framework;
 
-namespace Importer.Tests.RSI.State
+namespace Importer.Tests.RSI
 {
     [TestFixture]
     [TestOf(typeof(RsiState))]
-    public class RsiStateTests
+    public class RsiDimensionsTest
     {
         [Test]
         [TestCase(1, 1, 1)]
