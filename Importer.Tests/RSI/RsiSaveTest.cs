@@ -88,10 +88,14 @@ namespace Importer.Tests.RSI
                 Copyright = "Copyright",
                 States = states
             };
-            var stream = new MemoryStream();
 
+            var stream = new MemoryStream();
             await rsi.SaveRsiToStream(stream);
+
+            var firstJson = await new StreamReader(stream).ReadToEndAsync();
+            stream.Seek(0, SeekOrigin.Begin);
             rsi = await Rsi.FromMetaJson(stream);
+
             await stream.DisposeAsync();
 
             Assert.That(rsi.Version, Is.EqualTo(5));
@@ -106,13 +110,21 @@ namespace Importer.Tests.RSI
             Assert.That(state.Directions, Is.EqualTo(DirectionType.Diagonal));
 
             Assert.NotNull(state.Delays);
-            Assert.That(state.Delays.Count, Is.EqualTo(1));
+            Assert.That(state.Delays!.Count, Is.EqualTo(1));
             Assert.That(state.Delays[0].Count, Is.EqualTo(1));
             Assert.That(state.Delays[0][0], Is.EqualTo(5));
 
             Assert.NotNull(state.Flags);
-            Assert.That(state.Flags.Count, Is.EqualTo(1));
+            Assert.That(state.Flags!.Count, Is.EqualTo(1));
             Assert.That(state.Flags["Key"].ToString(), Is.EqualTo("Value"));
+
+            stream = new MemoryStream();
+            await rsi.SaveRsiToStream(stream);
+
+            var secondJson = await new StreamReader(stream).ReadToEndAsync();
+            await stream.DisposeAsync();
+
+            Assert.That(firstJson, Is.EqualTo(secondJson));
         }
     }
 }
