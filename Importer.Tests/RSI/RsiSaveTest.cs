@@ -149,36 +149,36 @@ namespace Importer.Tests.RSI
                     {
                         Name = "RsiState1",
                         Directions = DirectionType.Cardinal,
-                        Delays =
+                        Delays = new List<List<float>>
                         {
-                            new List<float> { 1f },
-                            new List<float> { 1f },
-                            new List<float> { 1f },
-                            new List<float> { 1f },
+                            new() { 1f },
+                            new() { 1f },
+                            new() { 1f },
+                            new() { 1f },
                         }
                     },
                     new()
                     {
                         Name = "RsiState2",
                         Directions = DirectionType.Cardinal,
-                        Delays =
+                        Delays = new List<List<float>>
                         {
-                            new List<float> { 1f, 1f },
-                            new List<float> { 1f, 1f },
-                            new List<float> { 1f, 1f },
-                            new List<float> { 1f, 1f },
+                            new() { 1f, 1f },
+                            new() { 1f, 1f },
+                            new() { 1f, 1f },
+                            new() { 1f, 1f },
                         }
                     },
                     new()
                     {
                         Name = "RsiState3",
                         Directions = DirectionType.Cardinal,
-                        Delays =
+                        Delays = new List<List<float>>
                         {
-                            new List<float> { 1f },
-                            new List<float> { 2f },
-                            new List<float> { 2f },
-                            new List<float> { 1f },
+                            new() { 1f },
+                            new() { 2f },
+                            new() { 2f },
+                            new() { 1f },
                         }
                     }
                 }
