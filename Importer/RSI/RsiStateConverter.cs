@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Importer.Directions;
 
 namespace Importer.RSI
 {
@@ -19,13 +20,18 @@ namespace Importer.RSI
             writer.WriteStartObject();
 
             writer.WriteString("name", value.Name);
-            writer.WriteNumber("directions", (int) value.Directions);
+            var nonDefaultDirection = value.Directions != DirectionType.None;
+            if (nonDefaultDirection)
+            {
+                writer.WriteNumber("directions", (int)value.Directions);
+            }
 
-            if (value.Delays is {Count: > 0})
+            var cleanedDelays = OmitDefaultDelays(value.Delays);
+            if (cleanedDelays is { Count: > 0 })
             {
                 writer.WriteStartArray("delays");
 
-                foreach (var delays in value.Delays)
+                foreach (var delays in cleanedDelays)
                 {
                     writer.WriteStartArray();
 
@@ -40,7 +46,7 @@ namespace Importer.RSI
                 writer.WriteEndArray();
             }
 
-            if (value.Flags is {Count: > 0})
+            if (value.Flags is { Count: > 0 })
             {
                 writer.WriteStartObject("flags");
 
@@ -53,6 +59,35 @@ namespace Importer.RSI
             }
 
             writer.WriteEndObject();
+        }
+
+        private List<List<float>> OmitDefaultDelays(List<List<float>>? valueDelays)
+        {
+            var cleanedDelays = new List<List<float>>();
+
+            var allWereEmpty = true;
+            if (valueDelays != null)
+            {
+                foreach (var delays in valueDelays)
+                {
+                    if (delays.Count != 1 || !delays[0].Equals(1f))
+                    {
+                        allWereEmpty = false;
+                        cleanedDelays.Add(delays);
+                    }
+                    else
+                    {
+                        cleanedDelays.Add(new List<float>());
+                    }
+                }
+
+                if (allWereEmpty)
+                {
+                    return new List<List<float>>();
+                }
+            }
+
+            return cleanedDelays;
         }
     }
 }
