@@ -22,6 +22,7 @@ namespace Importer.RSI
             DirectionType directions = DirectionType.None,
             List<List<float>>? delays = null,
             Dictionary<string, object>? flags = null,
+            string? imagePath = null,
             Image<Rgba32>[,]? frames = null,
             string? invalidCharacterReplace = "_")
         {
@@ -35,6 +36,7 @@ namespace Importer.RSI
             Delays = delays;
             Flags = flags;
 
+            ImagePath = imagePath;
             DelayLength = Delays is {Count: > 0} ? Delays[0].Count : 1;
             Frames = frames ?? new Image<Rgba32>[8, DelayLength];
 
@@ -46,12 +48,13 @@ namespace Importer.RSI
             string name,
             DirectionType directions = DirectionType.None,
             List<List<float>>? delays = null,
-            Dictionary<string, object>? flags = null)
-            : this (name, directions, delays, flags, null, null)
+            Dictionary<string, object>? flags = null,
+            string? imagePath = null)
+            : this(name, directions, delays, flags, imagePath, null, null)
         {
         }
 
-        public RsiState(string name = "") : this(name, DirectionType.None, null, null)
+        public RsiState() : this("", DirectionType.None, null, null, null)
         {
         }
 
@@ -66,6 +69,12 @@ namespace Importer.RSI
 
         [JsonPropertyName("flags")]
         public Dictionary<string, object>? Flags { get; set; }
+        
+        /// <summary>
+        ///     The path of the image to be copied when saving this state.
+        /// </summary>
+        [JsonIgnore]
+        public string? ImagePath { get; set; }
 
         [JsonIgnore]
         public int DelayLength { get; private set; }

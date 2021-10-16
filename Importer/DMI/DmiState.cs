@@ -13,7 +13,6 @@ namespace Importer.DMI
         List<float>? Delay = null,
         bool Rewind = false)
     {
-
         public static int GetRewindIndex(int currentIndex, int totalFrames)
         {
             return totalFrames - (currentIndex - totalFrames) - 2;

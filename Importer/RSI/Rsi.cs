@@ -97,6 +97,7 @@ namespace Importer.RSI
 
                 var image = await Image.LoadAsync<Rgba32>(fileName);
                 state.LoadImage(image, Size);
+                state.ImagePath = fileName;
             }
         }
 
@@ -121,7 +122,14 @@ namespace Importer.RSI
                 var image = state.GetFullImage(Size);
                 var path = $"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png";
 
-                await image.SaveAsPngAsync(path);
+                if (state.ImagePath == null)
+                {
+                    await image.SaveAsPngAsync(path);
+                }
+                else
+                {
+                    File.Copy(state.ImagePath, path, true);
+                }
             }
         }
 
