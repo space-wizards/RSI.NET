@@ -126,7 +126,7 @@ namespace Importer.RSI
                 {
                     await image.SaveAsPngAsync(path);
                 }
-                else
+                else if (state.ImagePath != path)
                 {
                     File.Copy(state.ImagePath, path, true);
                 }
