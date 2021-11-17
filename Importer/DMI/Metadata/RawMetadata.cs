@@ -172,6 +172,8 @@ namespace Importer.DMI.Metadata
                                 continue;
                             }
 
+                            delayNumber /= 10f;
+
                             delays.Add(delayNumber);
                         }
 
