@@ -2,20 +2,11 @@
 
 namespace Importer.RSI
 {
-    public record RsiSize
+    public record RsiSize(
+        [property: JsonPropertyName("x")] int X,
+        [property: JsonPropertyName("x")] int Y
+    )
     {
-        public RsiSize(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        [JsonPropertyName("x")]
-        public int X { get; }
-
-        [JsonPropertyName("y")]
-        public int Y { get; }
-
         public (int x, int y) CoordinatesForFrame(int index, int fileWidth)
         {
             var x = index * X;
