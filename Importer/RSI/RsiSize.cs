@@ -4,7 +4,7 @@ namespace Importer.RSI
 {
     public record RsiSize(
         [property: JsonPropertyName("x")] int X,
-        [property: JsonPropertyName("x")] int Y
+        [property: JsonPropertyName("y")] int Y
     )
     {
         public (int x, int y) CoordinatesForFrame(int index, int fileWidth)
