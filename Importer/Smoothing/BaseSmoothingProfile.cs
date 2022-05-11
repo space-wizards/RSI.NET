@@ -9,20 +9,29 @@ namespace RSI.Smoothing;
 /// <summary>
 /// Used in the hope of some magical future profile selector system.
 /// </summary>
-public interface INamedSmoothingProfile
+public interface ISmoothingProfile
 {
-    public string Name { get; }
+    string Name { get; }
+    bool UsesQuadSplit { get; }
+
+    /// <summary>
+    /// Instances this smoothing profile for a given set of tile metrics.
+    /// </summary>
+    BaseSmoothingInstance Instance(QuadMetrics qm);
 }
 
 /// <summary>
 /// Contains the source metrics of actual-tile-size-independent smoothing profiles.
+/// Note that ISmoothingProfile does not and should not require this.
 /// </summary>
-public abstract class BaseSmoothingProfileMetrics
+public class BaseSmoothingProfileMetrics
 {
     // May not end up being used for lookup.
     // Implies the state count.
     public readonly string[] SourceStateNameSuffixes;
     public readonly DirectionType SourceDirectionType;
+
+    public int SubstateCount => StateDirToSubstate(SourceStateNameSuffixes.Length, (Direction) 0);
 
     public BaseSmoothingProfileMetrics(string[] nameSuffixes, DirectionType dt)
     {
@@ -53,11 +62,11 @@ public abstract class BaseSmoothingProfileMetrics
 /// <summary>
 /// Contains a ready-to-use smoothing profile with specific metrics.
 /// </summary>
-public abstract class ReadyBaseSmoothingProfile : BaseSmoothingProfileMetrics
+public abstract class BaseSmoothingInstance : BaseSmoothingProfileMetrics
 {
     public readonly RsiSize RsiSize;
 
-    public ReadyBaseSmoothingProfile(RsiSize sz, BaseSmoothingProfileMetrics metricsSrc) : base(metricsSrc)
+    public BaseSmoothingInstance(RsiSize sz, BaseSmoothingProfileMetrics metricsSrc) : base(metricsSrc)
     {
         RsiSize = sz;
     }
