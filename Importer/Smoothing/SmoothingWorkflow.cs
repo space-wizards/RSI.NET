@@ -57,6 +57,13 @@ public static class SmoothingWorkflow
 
     public static Rsi Transform(Image<Rgba32> input, BaseSmoothingInstance importer, string exportPrefix, string fullState, BaseSmoothingInstance exporter)
     {
+        if (importer.SubstateCount != 1)
+        {
+            // Importer expects >1 substate and this format obviously doesn't have substates.
+            // Do what we can.
+            importer = new SplitJoinSmoothingInstance(importer, input.Width / importer.RsiSize.X);
+        }
+
         Image<Rgba32>[] importSubstates = {input};
 
         Tileset tiles = importer.SubstatesToTileset(importSubstates);
