@@ -7,7 +7,7 @@ namespace RSI.Smoothing;
 /// <summary>
 /// An SS14 smoothing profile is a "compressed" QuadSmoothingProfile, which only considers the states used by SS14 icon smoothing.
 /// </summary>
-public sealed class SS14SmoothingProfile
+public sealed class SS14SmoothingProfile : BaseSmoothingProfile
 {
     /// <summary>
     /// The mapping table for every possible situation.
@@ -17,6 +17,30 @@ public sealed class SS14SmoothingProfile
 
     public SS14SmoothingProfile()
     {
+    }
+
+    /// <summary>
+    /// SS14SmoothingProfile imported from a legacy table.
+    /// </summary>
+    public SS14SmoothingProfile(int[] legacyTable, DirectionType dirType)
+    {
+        int maxStates = 0;
+        int tableIdx = 0;
+        int dirTypeDirs = (int) dirType;
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                int tile = legacyTable[tableIdx++];
+                int tileDir = tile % dirTypeDirs;
+                tile /= dirTypeDirs;
+                Sources[i, j] = new QuadSmoothingProfileSource(tile, (Direction) tileDir);
+            }
+        }
+        SourceStateNameSuffixes = new string[maxStates];
+        for (int i = 0; i < maxStates; i++)
+            SourceStateNameSuffixes[i] = $"-{i}";
+        SourceDirectionType = dirType;
     }
 
     /// <summary>
@@ -40,6 +64,7 @@ public sealed class SS14SmoothingProfile
     public QuadSmoothingProfile ConvertToQuadProfile()
     {
         QuadSmoothingProfile res = new();
+        res.CopySourceMetricsFrom(this);
         for (int subTileIdx = 0; subTileIdx < 4; subTileIdx++)
         {
             var subTile = (QuadSubtileIndex) subTileIdx;
