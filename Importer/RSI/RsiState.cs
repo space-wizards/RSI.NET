@@ -150,7 +150,9 @@ public class RsiState : IDisposable
     {
         var image = new Image<Rgba32>?[DelayLength];
 
-        for (var i = 0; i < Frames.GetUpperBound((int) direction); i++)
+        // This code used GetUpperBound((int) direction) which was wrong in many, many ways.
+        // Given the way Frames is setup, I'm assuming this was the intent. Or at least it won't crash.
+        for (var i = 0; i < DelayLength; i++)
         {
             image[i] = Frames[(int) direction, i];
         }
