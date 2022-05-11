@@ -18,9 +18,9 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics, INamedSm
 
     /// <summary>
     /// The giant mapping table for every possible situation.
-    /// The first index is the tile (DirectionFlags), and the second index is the subtile (QuadSubtileIndex).
+    /// The first index is the tile (TGFlags), and the second index is the subtile (QuadSubtileIndex).
     /// </summary>
-    public readonly int[,] Sources = new int[TilesetTiles, QuadSubtiles];
+    public readonly int[,] Sources = new int[Tileset.Count, QuadSubtiles];
 
     public QuadSmoothingProfile(BaseSmoothingProfileMetrics metrics, string name) : base(metrics)
     {
@@ -30,7 +30,7 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics, INamedSm
     /// <summary>
     /// The source substate for a given subtile.
     /// </summary>
-    public int this[DirectionFlags idx, QuadSubtileIndex sub]
+    public int this[TGFlags idx, QuadSubtileIndex sub]
     {
         get
         {
@@ -69,32 +69,31 @@ public sealed class ReadyQuadSmoothingProfile : ReadyBaseSmoothingProfile
         dst.Mutate(x => x.DrawImage(grabbed, point, 1));
     }
 
-    public override Image<Rgba32>[] SubstatesToTileset(Image<Rgba32>[] substates)
+    public override Tileset SubstatesToTileset(Image<Rgba32>[] substates)
     {
-        Image<Rgba32>[] tileset = new Image<Rgba32>[TilesetTiles];
-        for (var i = 0; i < TilesetTiles; i++)
+        Tileset tileset = new(QuadMetrics.TileSize);
+        for (var i = 0; i < Tileset.Count; i++)
         {
-            var tile = new Image<Rgba32>(QuadMetrics.TileSize.Width, QuadMetrics.TileSize.Height);
+            var tile = tileset[i];
             for (var j = 0; j < QuadSubtiles; j++)
             {
                 var sourceIdx = BaseProfile.Sources[i, j];
                 TransferSubtile(tile, substates[sourceIdx], (QuadSubtileIndex) j);
             }
-            tileset[i] = tile;
         }
         return tileset;
     }
 
-    public override Image<Rgba32>[] TilesetToSubstates(Image<Rgba32>[] tiles)
+    public override Image<Rgba32>[] TilesetToSubstates(Tileset tileset)
     {
         Image<Rgba32>[] substates = new Image<Rgba32>[SourceStateNameSuffixes.Length];
         for (var i = 0; i < substates.Length; i++)
             substates[i] = new Image<Rgba32>(RsiSize.X, RsiSize.Y);
 
         bool[,] firstWins = new bool[substates.Length, QuadSubtiles];
-        for (var i = 0; i < TilesetTiles; i++)
+        for (var i = 0; i < Tileset.Count; i++)
         {
-            var tile = tiles[i];
+            var tile = tileset[i];
             for (var j = 0; j < QuadSubtiles; j++)
             {
                 var targetIdx = BaseProfile.Sources[i, j];

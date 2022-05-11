@@ -19,8 +19,6 @@ public interface INamedSmoothingProfile
 /// </summary>
 public abstract class BaseSmoothingProfileMetrics
 {
-    public const int TilesetTiles = 256;
-
     // May not end up being used for lookup.
     // Implies the state count.
     public readonly string[] SourceStateNameSuffixes;
@@ -67,11 +65,11 @@ public abstract class ReadyBaseSmoothingProfile : BaseSmoothingProfileMetrics
     /// <summary>
     /// Converts substates into a 256-tile set.
     /// </summary>
-    public abstract Image<Rgba32>[] SubstatesToTileset(Image<Rgba32>[] substates);
+    public abstract Tileset SubstatesToTileset(Image<Rgba32>[] substates);
 
     /// <summary>
     /// Converts a 256-tile set into the respective substates.
     /// </summary>
-    public abstract Image<Rgba32>[] TilesetToSubstates(Image<Rgba32>[] tiles);
+    public abstract Image<Rgba32>[] TilesetToSubstates(Tileset tiles);
 }
 

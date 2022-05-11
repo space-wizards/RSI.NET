@@ -30,8 +30,8 @@ public class Program
             substates[i] = state.FirstFrameFor(direction)!;
         }
 
-        Image<Rgba32>[] tiles = profile.SubstatesToTileset(substates);
-        for (int i = 0; i < tiles.Length; i++)
+        Tileset tiles = profile.SubstatesToTileset(substates);
+        for (int i = 0; i < Tileset.Count; i++)
             await tiles[i].SaveAsPngAsync($"tile{i}.png");
     }
 }
