@@ -1,8 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer", "Importer\Importer.csproj", "{2C480F9E-FAEB-4A6C-AB31-426D822D5155}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer.Tests", "Importer.Tests\Importer.Tests.csproj", "{0F444C64-D873-4088-A1BA-F315A8EFB544}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothCLI", "SmoothCLI\SmoothCLI.csproj", "{31854C61-481F-4F50-8942-841B47747B26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +21,9 @@ Global
 		{0F444C64-D873-4088-A1BA-F315A8EFB544}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F444C64-D873-4088-A1BA-F315A8EFB544}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F444C64-D873-4088-A1BA-F315A8EFB544}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31854C61-481F-4F50-8942-841B47747B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31854C61-481F-4F50-8942-841B47747B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31854C61-481F-4F50-8942-841B47747B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31854C61-481F-4F50-8942-841B47747B26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

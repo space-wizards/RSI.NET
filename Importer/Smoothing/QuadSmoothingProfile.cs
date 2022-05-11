@@ -35,6 +35,8 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics
             Sources[(int) idx, (int) sub] = value;
         }
     }
+
+    public ReadyQuadSmoothingProfile Parameterize(QuadMetrics qm) => new ReadyQuadSmoothingProfile(qm, this);
 }
 
 /// <summary>
