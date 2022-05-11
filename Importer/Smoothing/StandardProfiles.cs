@@ -6,7 +6,8 @@ public static class SmoothingProfiles
 {
     // -- Debug --
 
-    public static readonly ReferenceSheetSmoothingProfile Reference = new ReferenceSheetSmoothingProfile();
+    public static readonly ReferenceSheetSmoothingProfile ReferenceSplit = new ReferenceSheetSmoothingProfile();
+    public static readonly SplitJoinSmoothingProfile Reference = new SplitJoinSmoothingProfile("reference", ReferenceSplit, 16);
 
     // -- Space Station 14 --
 
@@ -118,17 +119,31 @@ public static class SmoothingProfiles
         DirectionType.None
     ).Compile("vxap-split");
 
+    public static readonly SplitJoinSmoothingProfile VXA = new SplitJoinSmoothingProfile("vxa", VXASplit, 2);
+    public static readonly SplitJoinSmoothingProfile VXAP = new SplitJoinSmoothingProfile("vxap", VXAPSplit, 2);
+
     // -- RM (Regular) --
 
     // -- List --
 
     public static readonly ISmoothingProfile[] AllProfiles = new ISmoothingProfile[] {
         Reference,
+        ReferenceSplit,
         SS14,
         Citadel,
         TG,
+        VXA,
+        VXAP,
         VXASplit,
         VXAPSplit
     };
+
+    public static ISmoothingProfile? ProfileByName(string name)
+    {
+        foreach (var sp in AllProfiles)
+            if (sp.Name == name)
+                return sp;
+        return null;
+    }
 }
 

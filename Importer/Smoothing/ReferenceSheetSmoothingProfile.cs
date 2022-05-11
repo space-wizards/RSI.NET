@@ -12,7 +12,7 @@ namespace RSI.Smoothing;
 /// </summary>
 public sealed class ReferenceSheetSmoothingProfile : ISmoothingProfile
 {
-    public string Name => "reference";
+    public string Name => "reference-split";
     public bool UsesQuadSplit => false;
     public BaseSmoothingInstance Instance(QuadMetrics qm) => new ReferenceSheetSmoothingInstance(qm);
 }
