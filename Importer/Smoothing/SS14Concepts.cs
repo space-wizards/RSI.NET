@@ -12,6 +12,7 @@ public enum SS14IndexFlags : int
     CCW = 1,
     Diagonal = 2,
     CW = 4,
+    All = 7,
 }
 
 public static class SS14IndexFlagsMethods
