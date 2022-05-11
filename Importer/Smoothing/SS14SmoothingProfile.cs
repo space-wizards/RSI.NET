@@ -1,5 +1,6 @@
 using System;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Importer.Directions;
 
 namespace RSI.Smoothing;
@@ -7,46 +8,26 @@ namespace RSI.Smoothing;
 /// <summary>
 /// An SS14 smoothing profile is a "compressed" QuadSmoothingProfile, which only considers the states used by SS14 icon smoothing.
 /// </summary>
-public sealed class SS14SmoothingProfile : BaseSmoothingProfile
+public sealed class SS14SmoothingProfile : BaseSmoothingProfileMetrics
 {
     /// <summary>
     /// The mapping table for every possible situation.
     /// The first index is the neighbourhood (SS14IndexFlags), and the second index is the subtile (QuadSubtileIndex).
     /// </summary>
-    public readonly QuadSmoothingProfileSource[,] Sources = new QuadSmoothingProfileSource[8, 4];
+    public readonly int[,] Sources = new int[8, 4];
 
-    public SS14SmoothingProfile()
+    public SS14SmoothingProfile(int[] table, string[] stateNames, DirectionType dirType) : base(stateNames, dirType)
     {
-    }
-
-    /// <summary>
-    /// SS14SmoothingProfile imported from a legacy table.
-    /// </summary>
-    public SS14SmoothingProfile(int[] legacyTable, DirectionType dirType)
-    {
-        int maxStates = 0;
         int tableIdx = 0;
-        int dirTypeDirs = (int) dirType;
         for (int i = 0; i < 8; i++)
-        {
             for (int j = 0; j < 4; j++)
-            {
-                int tile = legacyTable[tableIdx++];
-                int tileDir = tile % dirTypeDirs;
-                tile /= dirTypeDirs;
-                Sources[i, j] = new QuadSmoothingProfileSource(tile, (Direction) tileDir);
-            }
-        }
-        SourceStateNameSuffixes = new string[maxStates];
-        for (int i = 0; i < maxStates; i++)
-            SourceStateNameSuffixes[i] = $"-{i}";
-        SourceDirectionType = dirType;
+                Sources[i, j] = table[tableIdx++];
     }
 
     /// <summary>
-    /// The QuadSmoothingProfileSource for a given subtile.
+    /// The source substate for a given subtile.
     /// </summary>
-    public QuadSmoothingProfileSource this[SS14IndexFlags idx, QuadSubtileIndex sub]
+    public int this[SS14IndexFlags idx, QuadSubtileIndex sub]
     {
         get
         {
@@ -61,10 +42,9 @@ public sealed class SS14SmoothingProfile : BaseSmoothingProfile
     /// <summary>
     /// Convert this SS14SmoothingProfile into a QuadSmoothingProfile.
     /// </summary>
-    public QuadSmoothingProfile ConvertToQuadProfile()
+    public QuadSmoothingProfile Compile()
     {
-        QuadSmoothingProfile res = new();
-        res.CopySourceMetricsFrom(this);
+        QuadSmoothingProfile res = new(this);
         for (int subTileIdx = 0; subTileIdx < 4; subTileIdx++)
         {
             var subTile = (QuadSubtileIndex) subTileIdx;

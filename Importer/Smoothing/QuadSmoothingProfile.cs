@@ -1,42 +1,30 @@
 using System;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Importer.Directions;
+using Importer.RSI;
 
 namespace RSI.Smoothing;
-
-public class BaseSmoothingProfile
-{
-    // May not end up being used for lookup.
-    // Implies the state count.
-    public string[] SourceStateNameSuffixes = {""};
-    public DirectionType SourceDirectionType = DirectionType.None;
-
-    public void CopySourceMetricsFrom(BaseSmoothingProfile src)
-    {
-        SourceStateNameSuffixes = (string[]) src.SourceStateNameSuffixes.Clone();
-        SourceDirectionType = src.SourceDirectionType;
-    }
-}
 
 /// <summary>
 /// A smoothing profile defines a specific smoothing arrangement between states and directions inside an RSI and the canonical 256-tile form.
 /// </summary>
-public sealed class QuadSmoothingProfile : BaseSmoothingProfile
+public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics
 {
     /// <summary>
     /// The giant mapping table for every possible situation.
     /// The first index is the tile (DirectionFlags), and the second index is the subtile (QuadSubtileIndex).
     /// </summary>
-    public readonly QuadSmoothingProfileSource[,] Sources = new QuadSmoothingProfileSource[256, 4];
+    public readonly int[,] Sources = new int[256, 4];
 
-    public QuadSmoothingProfile()
+    public QuadSmoothingProfile(BaseSmoothingProfileMetrics metrics) : base(metrics)
     {
     }
 
     /// <summary>
-    /// The QuadSmoothingProfileSource for a given subtile.
+    /// The source substate for a given subtile.
     /// </summary>
-    public QuadSmoothingProfileSource this[DirectionFlags idx, QuadSubtileIndex sub]
+    public int this[DirectionFlags idx, QuadSubtileIndex sub]
     {
         get
         {
@@ -50,18 +38,25 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfile
 }
 
 /// <summary>
-/// A specific entry in a smoothing profile.
+/// A smoothing profile defines a specific smoothing arrangement between states and directions inside an RSI and the canonical 256-tile form.
 /// </summary>
-public struct QuadSmoothingProfileSource
+public sealed class ReadyQuadSmoothingProfile : ReadyBaseSmoothingProfile
 {
-    // Source state index & direction
-    public int SourceState;
-    public Direction SourceDirection;
+    public readonly QuadSmoothingProfile BaseProfile;
 
-    public QuadSmoothingProfileSource(int state, Direction dir = Direction.South)
+    public ReadyQuadSmoothingProfile(QuadMetrics qm, QuadSmoothingProfile src) : base(new RsiSize(qm.TileSize.Width, qm.TileSize.Height), src)
     {
-        SourceState = state;
-        SourceDirection = dir;
+        BaseProfile = src;
+    }
+
+    public override Image<Rgba32>[] SubstatesToTileset(Image<Rgba32>[] substates)
+    {
+        throw new Exception("Whoops!");
+    }
+
+    public override Image<Rgba32>[] TilesetToSubstates(Image<Rgba32>[] tiles)
+    {
+        throw new Exception("Whoops!");
     }
 }
 
