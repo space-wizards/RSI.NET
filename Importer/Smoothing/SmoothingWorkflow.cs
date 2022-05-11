@@ -9,15 +9,26 @@ namespace RSI.Smoothing;
 
 public static class SmoothingWorkflow
 {
-    public static Rsi Transform(Rsi input, string _importPrefix, BaseSmoothingInstance importer, string exportPrefix, string fullState, BaseSmoothingInstance exporter)
+    public static Rsi Transform(Rsi input, string importPrefix, BaseSmoothingInstance importer, string exportPrefix, string fullState, BaseSmoothingInstance exporter)
     {
         Image<Rgba32>[] importSubstates = new Image<Rgba32>[importer.SubstateCount];
         for (var i = 0; i < importSubstates.Length; i++)
         {
             var stateIdx = importer.SubstateToState(i);
             var direction = importer.SubstateToDirection(i);
-            var state = input.States[stateIdx];
-            importSubstates[i] = state.FirstFrameFor(direction)!;
+            var expectedStateName = importPrefix + importer.SourceStateNameSuffixes[stateIdx];
+            RsiState? targetState = null;
+            foreach (var state in input.States)
+            {
+                if (state.Name == expectedStateName)
+                {
+                    targetState = state;
+                    break;
+                }
+            }
+            if (targetState == null)
+                throw new Exception($"Unable to find state {expectedStateName}");
+            importSubstates[i] = targetState.FirstFrameFor(direction)!;
         }
 
         Tileset tiles = importer.SubstatesToTileset(importSubstates);

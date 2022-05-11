@@ -9,6 +9,8 @@ public static class SmoothingProfiles
     public static readonly TileMapperSmoothingProfile ReferenceSplit = TileMapperSmoothingProfile.ReferenceSplit();
     public static readonly SplitJoinSmoothingProfile Reference = new SplitJoinSmoothingProfile("reference", ReferenceSplit, 16);
 
+    public static readonly SplitJoinSmoothingProfile TestPattern = new SplitJoinSmoothingProfile("testpattern", TMProfiles.CreateTestPatternProfile(), 8);
+
     // -- Space Station 14 --
 
     public static readonly QuadSmoothingProfile SS14 = new SS14SmoothingProfile(
@@ -56,7 +58,7 @@ public static class SmoothingProfiles
         DirectionType.None
     ).Compile("citadel");
 
-    public static readonly TileMapperSmoothingProfile TG = TGProfile.CreateTGProfile();
+    public static readonly TileMapperSmoothingProfile TG = TMProfiles.CreateTGProfile();
     public static readonly SplitJoinSmoothingProfile TGSheet = new SplitJoinSmoothingProfile("tg-sheet", TG, 16);
 
     // -- RM (Split) --
@@ -105,6 +107,7 @@ public static class SmoothingProfiles
     public static readonly ISmoothingProfile[] AllProfiles = new ISmoothingProfile[] {
         Reference,
         ReferenceSplit,
+        TestPattern,
         SS14,
         Citadel,
         TG,
