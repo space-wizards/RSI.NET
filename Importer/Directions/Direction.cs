@@ -11,3 +11,19 @@ public enum Direction
     NorthEast = 6,
     NorthWest = 7,
 }
+
+/// <summary>
+/// Flags (bits kept in sync with Direction's values for consistency)
+/// </summary>
+public enum DirectionFlags : int
+{
+    South = 1,
+    North = 2,
+    East = 4,
+    West = 8,
+    SouthEast = 16,
+    SouthWest = 32,
+    NorthEast = 64,
+    NorthWest = 128,
+}
+
