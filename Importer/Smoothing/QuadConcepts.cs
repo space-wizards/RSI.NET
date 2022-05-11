@@ -38,7 +38,7 @@ public struct QuadMetrics
     }
 
     /// <summary>
-    /// Return a rectangle for a given quad.
+    /// Return a rectangle for a given subtile.
     /// </summary>
     public Rectangle this[QuadSubtileIndex index]
     {
