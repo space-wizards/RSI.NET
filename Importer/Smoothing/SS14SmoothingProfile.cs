@@ -51,15 +51,15 @@ public sealed class SS14SmoothingProfile : BaseSmoothingProfileMetrics
         for (int subTileIdx = 0; subTileIdx < QuadSubtiles; subTileIdx++)
         {
             var subTile = (QuadSubtileIndex) subTileIdx;
-            var relevantDirFlags = SS14IndexFlags.All.ToDirectionFlags(subTile);
+            var relevantDirFlags = SS14IndexFlags.All.ToTGFlags(subTile);
             for (int neighbourIdx = 0; neighbourIdx < SS14Indices; neighbourIdx++)
             {
                 var neighbourFlags = (SS14IndexFlags) neighbourIdx;
-                var neighbourDirFlags = neighbourFlags.ToDirectionFlags(subTile);
-                for (int dirFlagsIdx = 0; dirFlagsIdx < TilesetTiles; dirFlagsIdx++)
+                var neighbourDirFlags = neighbourFlags.ToTGFlags(subTile);
+                for (int dirFlagsIdx = 0; dirFlagsIdx < Tileset.Count; dirFlagsIdx++)
                 {
                     // See if this matches
-                    var dirFlags = (DirectionFlags) dirFlagsIdx;
+                    var dirFlags = (TGFlags) dirFlagsIdx;
                     if ((dirFlags & relevantDirFlags) != neighbourDirFlags)
                         continue;
                     // It matches, so we're using this

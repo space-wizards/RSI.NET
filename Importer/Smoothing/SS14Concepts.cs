@@ -17,39 +17,39 @@ public enum SS14IndexFlags : int
 
 public static class SS14IndexFlagsMethods
 {
-    public static DirectionFlags ToDirectionFlags(this SS14IndexFlags idx, QuadSubtileIndex rotation)
+    public static TGFlags ToTGFlags(this SS14IndexFlags idx, QuadSubtileIndex rotation)
     {
         int idx2 = (int) idx;
         bool ccw = (idx2 & 1) != 0;
         bool diagonal = (idx2 & 2) != 0;
         bool cw = (idx2 & 4) != 0;
 
-        var res = (DirectionFlags) 0;
-        var ccwDF = (DirectionFlags) 0;
-        var dDF = (DirectionFlags) 0;
-        var cwDF = (DirectionFlags) 0;
+        var res = (TGFlags) 0;
+        var ccwDF = (TGFlags) 0;
+        var dDF = (TGFlags) 0;
+        var cwDF = (TGFlags) 0;
 
         switch (rotation)
         {
             case QuadSubtileIndex.NorthWest:
-                ccwDF = DirectionFlags.West;
-                dDF = DirectionFlags.NorthWest;
-                cwDF = DirectionFlags.North;
+                ccwDF = TGFlags.West;
+                dDF = TGFlags.NorthWest;
+                cwDF = TGFlags.North;
                 break;
             case QuadSubtileIndex.NorthEast:
-                ccwDF = DirectionFlags.North;
-                dDF = DirectionFlags.NorthEast;
-                cwDF = DirectionFlags.East;
+                ccwDF = TGFlags.North;
+                dDF = TGFlags.NorthEast;
+                cwDF = TGFlags.East;
                 break;
             case QuadSubtileIndex.SouthEast:
-                ccwDF = DirectionFlags.East;
-                dDF = DirectionFlags.SouthEast;
-                cwDF = DirectionFlags.South;
+                ccwDF = TGFlags.East;
+                dDF = TGFlags.SouthEast;
+                cwDF = TGFlags.South;
                 break;
             case QuadSubtileIndex.SouthWest:
-                ccwDF = DirectionFlags.South;
-                dDF = DirectionFlags.SouthWest;
-                cwDF = DirectionFlags.West;
+                ccwDF = TGFlags.South;
+                dDF = TGFlags.SouthWest;
+                cwDF = TGFlags.West;
                 break;
         }
 

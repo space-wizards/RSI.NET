@@ -116,26 +116,26 @@ public enum VXAPIndex : int
 
 public static class VXAPIndexMethods
 {
-    public static DirectionFlags ToDirectionFlags(this VXAPIndex idx)
+    public static TGFlags ToTGFlags(this VXAPIndex idx)
     {
         switch (idx)
         {
             case VXAPIndex.XDiagonals:
-                return DirectionFlags.NorthWest | DirectionFlags.NorthEast | DirectionFlags.SouthWest | DirectionFlags.SouthEast;
+                return TGFlags.NorthWest | TGFlags.NorthEast | TGFlags.SouthWest | TGFlags.SouthEast;
             case VXAPIndex.InnerCorners:
-                return DirectionFlags.North | DirectionFlags.South | DirectionFlags.East | DirectionFlags.West;
+                return TGFlags.North | TGFlags.South | TGFlags.East | TGFlags.West;
             case VXAPIndex.NorthWest:
-                return DirectionFlags.East | DirectionFlags.SouthEast | DirectionFlags.South;
+                return TGFlags.East | TGFlags.SouthEast | TGFlags.South;
             case VXAPIndex.NorthEast:
-                return DirectionFlags.West | DirectionFlags.SouthWest | DirectionFlags.South;
+                return TGFlags.West | TGFlags.SouthWest | TGFlags.South;
             case VXAPIndex.SouthWest:
-                return DirectionFlags.East | DirectionFlags.NorthEast | DirectionFlags.North;
+                return TGFlags.East | TGFlags.NorthEast | TGFlags.North;
             case VXAPIndex.SouthEast:
-                return DirectionFlags.West | DirectionFlags.NorthWest | DirectionFlags.North;
+                return TGFlags.West | TGFlags.NorthWest | TGFlags.North;
             case VXAPIndex.XHorizontalDiagonals:
-                return DirectionFlags.NorthWest | DirectionFlags.NorthEast | DirectionFlags.SouthWest | DirectionFlags.SouthEast | DirectionFlags.West | DirectionFlags.East;
+                return TGFlags.NorthWest | TGFlags.NorthEast | TGFlags.SouthWest | TGFlags.SouthEast | TGFlags.West | TGFlags.East;
             case VXAPIndex.XVerticalDiagonals:
-                return DirectionFlags.NorthWest | DirectionFlags.NorthEast | DirectionFlags.SouthWest | DirectionFlags.SouthEast | DirectionFlags.North | DirectionFlags.South;
+                return TGFlags.NorthWest | TGFlags.NorthEast | TGFlags.SouthWest | TGFlags.SouthEast | TGFlags.North | TGFlags.South;
         }
         throw new Exception("Unknown VXAPIndex");
     }
