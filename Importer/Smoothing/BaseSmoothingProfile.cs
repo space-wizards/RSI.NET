@@ -7,6 +7,14 @@ using Importer.RSI;
 namespace RSI.Smoothing;
 
 /// <summary>
+/// Used in the hope of some magical future profile selector system.
+/// </summary>
+public interface INamedSmoothingProfile
+{
+    public string Name { get; }
+}
+
+/// <summary>
 /// Contains the source metrics of actual-tile-size-independent smoothing profiles.
 /// </summary>
 public abstract class BaseSmoothingProfileMetrics

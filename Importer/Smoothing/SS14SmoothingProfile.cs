@@ -45,9 +45,9 @@ public sealed class SS14SmoothingProfile : BaseSmoothingProfileMetrics
     /// <summary>
     /// Convert this SS14SmoothingProfile into a QuadSmoothingProfile.
     /// </summary>
-    public QuadSmoothingProfile Compile()
+    public QuadSmoothingProfile Compile(string name)
     {
-        QuadSmoothingProfile res = new(this);
+        QuadSmoothingProfile res = new(this, name);
         for (int subTileIdx = 0; subTileIdx < QuadSubtiles; subTileIdx++)
         {
             var subTile = (QuadSubtileIndex) subTileIdx;

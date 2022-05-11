@@ -10,9 +10,11 @@ namespace RSI.Smoothing;
 /// <summary>
 /// A smoothing profile defines a specific smoothing arrangement between states and directions inside an RSI and the canonical 256-tile form.
 /// </summary>
-public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics
+public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics, INamedSmoothingProfile
 {
     public const int QuadSubtiles = 4;
+
+    public string Name { get; }
 
     /// <summary>
     /// The giant mapping table for every possible situation.
@@ -20,8 +22,9 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics
     /// </summary>
     public readonly int[,] Sources = new int[TilesetTiles, QuadSubtiles];
 
-    public QuadSmoothingProfile(BaseSmoothingProfileMetrics metrics) : base(metrics)
+    public QuadSmoothingProfile(BaseSmoothingProfileMetrics metrics, string name) : base(metrics)
     {
+        Name = name;
     }
 
     /// <summary>
