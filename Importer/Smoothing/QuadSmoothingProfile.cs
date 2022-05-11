@@ -1,6 +1,7 @@
 using System;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using Importer.Directions;
 using Importer.RSI;
 
@@ -11,11 +12,13 @@ namespace RSI.Smoothing;
 /// </summary>
 public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics
 {
+    public const int QuadSubtiles = 4;
+
     /// <summary>
     /// The giant mapping table for every possible situation.
     /// The first index is the tile (DirectionFlags), and the second index is the subtile (QuadSubtileIndex).
     /// </summary>
-    public readonly int[,] Sources = new int[256, 4];
+    public readonly int[,] Sources = new int[TilesetTiles, QuadSubtiles];
 
     public QuadSmoothingProfile(BaseSmoothingProfileMetrics metrics) : base(metrics)
     {
@@ -44,21 +47,63 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics
 /// </summary>
 public sealed class ReadyQuadSmoothingProfile : ReadyBaseSmoothingProfile
 {
+    public const int QuadSubtiles = QuadSmoothingProfile.QuadSubtiles;
+
     public readonly QuadSmoothingProfile BaseProfile;
+    public readonly QuadMetrics QuadMetrics;
 
     public ReadyQuadSmoothingProfile(QuadMetrics qm, QuadSmoothingProfile src) : base(new RsiSize(qm.TileSize.Width, qm.TileSize.Height), src)
     {
         BaseProfile = src;
+        QuadMetrics = qm;
+    }
+
+    private void TransferSubtile(Image<Rgba32> dst, Image<Rgba32> src, QuadSubtileIndex subtile)
+    {
+        var subRect = QuadMetrics[subtile];
+        var grabbed = src.Clone(x => x.Crop(subRect));
+        var point = new Point(subRect.X, subRect.Y);
+        dst.Mutate(x => x.DrawImage(grabbed, point, 1));
     }
 
     public override Image<Rgba32>[] SubstatesToTileset(Image<Rgba32>[] substates)
     {
-        throw new Exception("Whoops!");
+        Image<Rgba32>[] tileset = new Image<Rgba32>[TilesetTiles];
+        for (var i = 0; i < TilesetTiles; i++)
+        {
+            var tile = new Image<Rgba32>(QuadMetrics.TileSize.Width, QuadMetrics.TileSize.Height);
+            for (var j = 0; j < QuadSubtiles; j++)
+            {
+                var sourceIdx = BaseProfile.Sources[i, j];
+                TransferSubtile(tile, substates[sourceIdx], (QuadSubtileIndex) j);
+            }
+            tileset[i] = tile;
+        }
+        return tileset;
     }
 
     public override Image<Rgba32>[] TilesetToSubstates(Image<Rgba32>[] tiles)
     {
-        throw new Exception("Whoops!");
+        Image<Rgba32>[] substates = new Image<Rgba32>[SourceStateNameSuffixes.Length];
+        for (var i = 0; i < substates.Length; i++)
+            substates[i] = new Image<Rgba32>(RsiSize.X, RsiSize.Y);
+
+        bool[,] firstWins = new bool[substates.Length, QuadSubtiles];
+        for (var i = 0; i < TilesetTiles; i++)
+        {
+            var tile = tiles[i];
+            for (var j = 0; j < QuadSubtiles; j++)
+            {
+                var targetIdx = BaseProfile.Sources[i, j];
+                // Block a target subtile from being written more than once.
+                // This, along with the ordering, prevents the issue of diagonals being written where they really SHOULDN'T.
+                if (firstWins[targetIdx, j])
+                    continue;
+                firstWins[targetIdx, j] = true;
+                TransferSubtile(substates[targetIdx], tile, (QuadSubtileIndex) j);
+            }
+        }
+        return substates;
     }
 }
 

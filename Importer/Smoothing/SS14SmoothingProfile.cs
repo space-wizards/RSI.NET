@@ -10,17 +10,20 @@ namespace RSI.Smoothing;
 /// </summary>
 public sealed class SS14SmoothingProfile : BaseSmoothingProfileMetrics
 {
+    public const int QuadSubtiles = QuadSmoothingProfile.QuadSubtiles;
+    public const int SS14Indices = 8;
+
     /// <summary>
     /// The mapping table for every possible situation.
     /// The first index is the neighbourhood (SS14IndexFlags), and the second index is the subtile (QuadSubtileIndex).
     /// </summary>
-    public readonly int[,] Sources = new int[8, 4];
+    public readonly int[,] Sources = new int[SS14Indices, QuadSubtiles];
 
     public SS14SmoothingProfile(int[] table, string[] stateNames, DirectionType dirType) : base(stateNames, dirType)
     {
         int tableIdx = 0;
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 4; j++)
+        for (int i = 0; i < SS14Indices; i++)
+            for (int j = 0; j < QuadSubtiles; j++)
                 Sources[i, j] = table[tableIdx++];
     }
 
@@ -45,15 +48,15 @@ public sealed class SS14SmoothingProfile : BaseSmoothingProfileMetrics
     public QuadSmoothingProfile Compile()
     {
         QuadSmoothingProfile res = new(this);
-        for (int subTileIdx = 0; subTileIdx < 4; subTileIdx++)
+        for (int subTileIdx = 0; subTileIdx < QuadSubtiles; subTileIdx++)
         {
             var subTile = (QuadSubtileIndex) subTileIdx;
             var relevantDirFlags = SS14IndexFlags.All.ToDirectionFlags(subTile);
-            for (int neighbourIdx = 0; neighbourIdx < 8; neighbourIdx++)
+            for (int neighbourIdx = 0; neighbourIdx < SS14Indices; neighbourIdx++)
             {
                 var neighbourFlags = (SS14IndexFlags) neighbourIdx;
                 var neighbourDirFlags = neighbourFlags.ToDirectionFlags(subTile);
-                for (int dirFlagsIdx = 0; dirFlagsIdx < 256; dirFlagsIdx++)
+                for (int dirFlagsIdx = 0; dirFlagsIdx < TilesetTiles; dirFlagsIdx++)
                 {
                     // See if this matches
                     var dirFlags = (DirectionFlags) dirFlagsIdx;

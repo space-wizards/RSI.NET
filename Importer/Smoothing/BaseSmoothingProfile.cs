@@ -11,6 +11,8 @@ namespace RSI.Smoothing;
 /// </summary>
 public abstract class BaseSmoothingProfileMetrics
 {
+    public const int TilesetTiles = 256;
+
     // May not end up being used for lookup.
     // Implies the state count.
     public readonly string[] SourceStateNameSuffixes;
