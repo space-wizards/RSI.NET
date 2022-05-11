@@ -20,6 +20,15 @@ public enum TGFlags : int
     SouthEast = 32,
     SouthWest = 64,
     NorthWest = 128,
+    // SHORTER NAMES, OLD ONES INTERNALLY DEPRECATED, THANKS
+    N = 1,
+    S = 2,
+    E = 4,
+    W = 8,
+    NE = 16,
+    SE = 32,
+    SW = 64,
+    NW = 128,
 }
 
 /// <summary>

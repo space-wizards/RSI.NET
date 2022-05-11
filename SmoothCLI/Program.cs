@@ -17,19 +17,19 @@ public class Program
         var tileHeight = 32;
         var subtileWidth = 16;
         var subtileHeight = 16;
-        if (args.Length == 4)
+        if (args.Length == 5)
         {
             argSrcRSI = 2;
             // tile size stuff left at default
         }
-        else if (args.Length == 5)
+        else if (args.Length == 6)
         {
             tileWidth = tileHeight = int.Parse(args[2]);
             subtileWidth = tileWidth / 2;
             subtileHeight = tileHeight / 2;
             argSrcRSI = 3;
         }
-        else if (args.Length == 6)
+        else if (args.Length == 7)
         {
             tileWidth = int.Parse(args[2]);
             tileHeight = int.Parse(args[3]);
@@ -37,7 +37,7 @@ public class Program
             subtileHeight = tileHeight / 2;
             argSrcRSI = 4;
         }
-        else if (args.Length == 8)
+        else if (args.Length == 9)
         {
             tileWidth = int.Parse(args[2]);
             tileHeight = int.Parse(args[3]);
@@ -47,7 +47,7 @@ public class Program
         }
         else
         {
-            Console.WriteLine("./SmoothCLI <source type> <destination type> [<width> [<height> [<split X> <split Y>]]] <source RSI/PNG> <destination RSI/PNG>");
+            Console.WriteLine("./SmoothCLI <source type> <destination type> [<width> [<height> [<split X> <split Y>]]] <source RSI/PNG> <source state prefix> <destination RSI/PNG>");
             Console.WriteLine("split X/Y is for formats that split up the tile into pieces. if split X/Y are omitted, it's assumed to be the centre.");
             Console.WriteLine("if height is also omitted, it defaults to width. if width is also omitted, it defaults to 32.");
             Console.WriteLine("source/destination may be RSI or PNG. reading from a PNG reads as a single state - writing to a PNG writes the first state.");
@@ -68,7 +68,8 @@ public class Program
             throw new Exception($"Unknown profile {args[1]}");
 
         var inRSIPath = args[argSrcRSI];
-        var outRSIPath = args[argSrcRSI + 1];
+        var inStatePrefix = args[argSrcRSI + 1];
+        var outRSIPath = args[argSrcRSI + 2];
 
         var metrics = new QuadMetrics(new Size(tileWidth, tileHeight), new Size(subtileWidth, subtileHeight));
 
@@ -90,13 +91,13 @@ public class Program
 
         if (inputImage != null)
         {
-            output = SmoothingWorkflow.Transform(inputImage, importProfileInst, "", "full", exportProfileInst);
+            output = SmoothingWorkflow.Transform(inputImage, importProfileInst, "state_", "full", exportProfileInst);
         }
         else
         {
             var input = await Rsi.FromFolder(inRSIPath);
             await input.TryLoadFolderImages(inRSIPath);
-            output = SmoothingWorkflow.Transform(input, "", importProfileInst, "", "full", exportProfileInst);
+            output = SmoothingWorkflow.Transform(input, inStatePrefix, importProfileInst, "state_", "full", exportProfileInst);
         }
         if (outRSIPath.EndsWith(".png"))
         {

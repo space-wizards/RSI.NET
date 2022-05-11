@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer.Tests", "Importer.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothCLI", "SmoothCLI\SmoothCLI.csproj", "{31854C61-481F-4F50-8942-841B47747B26}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmoothWatch", "SmoothWatch\SmoothWatch.csproj", "{CC4B6F7C-E603-4C18-B846-18A01B492A40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,5 +27,9 @@ Global
 		{31854C61-481F-4F50-8942-841B47747B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31854C61-481F-4F50-8942-841B47747B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31854C61-481F-4F50-8942-841B47747B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC4B6F7C-E603-4C18-B846-18A01B492A40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC4B6F7C-E603-4C18-B846-18A01B492A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC4B6F7C-E603-4C18-B846-18A01B492A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC4B6F7C-E603-4C18-B846-18A01B492A40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
