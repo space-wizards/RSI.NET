@@ -4,6 +4,10 @@ namespace RSI.Smoothing;
 
 public static class SmoothingProfiles
 {
+    // -- Debug --
+
+    public static readonly ReferenceSheetSmoothingProfile Reference = new ReferenceSheetSmoothingProfile();
+
     // -- Space Station 14 --
 
     public static readonly QuadSmoothingProfile SS14 = new SS14SmoothingProfile(
@@ -118,7 +122,8 @@ public static class SmoothingProfiles
 
     // -- List --
 
-    public static readonly QuadSmoothingProfile[] AllProfiles = new QuadSmoothingProfile[] {
+    public static readonly ISmoothingProfile[] AllProfiles = new ISmoothingProfile[] {
+        Reference,
         SS14,
         Citadel,
         TG,

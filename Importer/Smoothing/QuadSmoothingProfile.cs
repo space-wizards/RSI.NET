@@ -8,13 +8,14 @@ using Importer.RSI;
 namespace RSI.Smoothing;
 
 /// <summary>
-/// A smoothing profile defines a specific smoothing arrangement between states and directions inside an RSI and the canonical 256-tile form.
+/// A smoothing profile based on dividing the tile into 4 subtiles.
 /// </summary>
-public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics, INamedSmoothingProfile
+public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics, ISmoothingProfile
 {
     public const int QuadSubtiles = 4;
 
     public string Name { get; }
+    public bool UsesQuadSplit => true;
 
     /// <summary>
     /// The giant mapping table for every possible situation.
@@ -42,20 +43,20 @@ public sealed class QuadSmoothingProfile : BaseSmoothingProfileMetrics, INamedSm
         }
     }
 
-    public ReadyQuadSmoothingProfile Parameterize(QuadMetrics qm) => new ReadyQuadSmoothingProfile(qm, this);
+    public BaseSmoothingInstance Instance(QuadMetrics qm) => new QuadSmoothingInstance(qm, this);
 }
 
 /// <summary>
-/// A smoothing profile defines a specific smoothing arrangement between states and directions inside an RSI and the canonical 256-tile form.
+/// A ready-to-use instance of a QuadSmoothingProfile for given QuadMetrics.
 /// </summary>
-public sealed class ReadyQuadSmoothingProfile : ReadyBaseSmoothingProfile
+public sealed class QuadSmoothingInstance : BaseSmoothingInstance
 {
     public const int QuadSubtiles = QuadSmoothingProfile.QuadSubtiles;
 
     public readonly QuadSmoothingProfile BaseProfile;
     public readonly QuadMetrics QuadMetrics;
 
-    public ReadyQuadSmoothingProfile(QuadMetrics qm, QuadSmoothingProfile src) : base(new RsiSize(qm.TileSize.Width, qm.TileSize.Height), src)
+    public QuadSmoothingInstance(QuadMetrics qm, QuadSmoothingProfile src) : base(qm.TileSizeAsRSISize, src)
     {
         BaseProfile = src;
         QuadMetrics = qm;

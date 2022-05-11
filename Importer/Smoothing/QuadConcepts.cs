@@ -1,5 +1,6 @@
 using System;
 using SixLabors.ImageSharp;
+using Importer.RSI;
 
 namespace RSI.Smoothing;
 
@@ -12,6 +13,8 @@ public struct QuadMetrics
     /// Tile size.
     /// </summary>
     public Size TileSize;
+
+    public RsiSize TileSizeAsRSISize => new RsiSize(TileSize.Width, TileSize.Height);
 
     /// <summary>
     /// North-west subtile size.
