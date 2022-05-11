@@ -6,7 +6,7 @@ public static class SmoothingProfiles
 {
     // -- Debug --
 
-    public static readonly ReferenceSheetSmoothingProfile ReferenceSplit = new ReferenceSheetSmoothingProfile();
+    public static readonly TileMapperSmoothingProfile ReferenceSplit = TileMapperSmoothingProfile.ReferenceSplit();
     public static readonly SplitJoinSmoothingProfile Reference = new SplitJoinSmoothingProfile("reference", ReferenceSplit, 16);
 
     // -- Space Station 14 --
@@ -56,32 +56,8 @@ public static class SmoothingProfiles
         DirectionType.None
     ).Compile("citadel");
 
-    // TODO: This is a BAD PROFILE! I AM A BAD PERSON! WHY HAVE I USHERED FORTH THE MISSING SUBTILE APOCALYPSE?!?!?!
-    // Seriously, though, /tg/ needs a dedicated profile to really work right, it uses a decompressed AT Field
-    public static readonly QuadSmoothingProfile TG = new SS14SmoothingProfile(
-        new int[]
-        {
-        //  BR  TL  TR  BL
-             0,  0,  0,  0, // 0
-            12, 12,  3,  3, // 1
-             0,  0,  0,  0, // 2
-            12, 12,  3,  3, // 3
-             3,  3, 12, 12, // 4
-            15, 15, 15, 15, // 5
-             3,  3, 12, 12, // 6
-            46, 46, 46, 46  // 7
-        },
-        new string[]
-        {
-            "0", "1", "2", "3", "4", "5", "6", "7",
-            "8", "9", "10", "11", "12", "13", "14", "15",
-            "21", "23", "29", "31", "38", "39", "46", "47",
-            "55", "63", "74", "75", "78", "79", "95", "110",
-            "111", "127", "137", "139", "141", "143", "157", "159",
-            "175", "191", "203", "207", "223", "239", "255"
-        },
-        DirectionType.None
-    ).Compile("tg");
+    public static readonly TileMapperSmoothingProfile TG = TGProfile.CreateTGProfile();
+    public static readonly SplitJoinSmoothingProfile TGSheet = new SplitJoinSmoothingProfile("tg-sheet", TG, 16);
 
     // -- RM (Split) --
 
@@ -119,10 +95,10 @@ public static class SmoothingProfiles
         DirectionType.None
     ).Compile("vxap-split");
 
+    // -- RM (Regular) --
+
     public static readonly SplitJoinSmoothingProfile VXA = new SplitJoinSmoothingProfile("vxa", VXASplit, 2);
     public static readonly SplitJoinSmoothingProfile VXAP = new SplitJoinSmoothingProfile("vxap", VXAPSplit, 2);
-
-    // -- RM (Regular) --
 
     // -- List --
 
@@ -132,6 +108,7 @@ public static class SmoothingProfiles
         SS14,
         Citadel,
         TG,
+        TGSheet,
         VXA,
         VXAP,
         VXASplit,
