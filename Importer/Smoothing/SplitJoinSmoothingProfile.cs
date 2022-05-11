@@ -23,7 +23,7 @@ public sealed class SplitJoinSmoothingProfile : ISmoothingProfile
         Underlying = underlying;
         Columns = columns;
     }
-    public BaseSmoothingInstance Instance(QuadMetrics qm) => new SplitJoinSmoothingInstance(Underlying.Instance(qm), Columns, qm);
+    public BaseSmoothingInstance Instance(QuadMetrics qm) => new SplitJoinSmoothingInstance(Underlying.Instance(qm), Columns);
 }
 
 /// <summary>
@@ -38,7 +38,7 @@ public sealed class SplitJoinSmoothingInstance : BaseSmoothingInstance
     {
         return new BaseSmoothingProfileMetrics(new string[] {"sheet"}, DirectionType.None);
     }
-    private static RsiSize DetermineRSISize(BaseSmoothingInstance underlying, int columns, QuadMetrics qm)
+    private static RsiSize DetermineRSISize(BaseSmoothingInstance underlying, int columns)
     {
         var rows = (underlying.SubstateCount + (columns - 1)) / columns;
         if (rows == 0)
@@ -46,7 +46,7 @@ public sealed class SplitJoinSmoothingInstance : BaseSmoothingInstance
         return new RsiSize(underlying.RsiSize.X * columns, underlying.RsiSize.Y * rows);
     }
 
-    public SplitJoinSmoothingInstance(BaseSmoothingInstance underlying, int columns, QuadMetrics qm) : base(DetermineRSISize(underlying, columns, qm), DetermineMetrics())
+    public SplitJoinSmoothingInstance(BaseSmoothingInstance underlying, int columns) : base(DetermineRSISize(underlying, columns), DetermineMetrics())
     {
         Underlying = underlying;
         Columns = columns;
