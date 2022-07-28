@@ -1,9 +1,8 @@
-﻿namespace Importer.Directions
+﻿namespace Importer.Directions;
+
+public enum DirectionType
 {
-    public enum DirectionType
-    {
-        None = 1,
-        Cardinal = 4,
-        Diagonal = 8
-    }
+    None = 1,
+    Cardinal = 4,
+    Diagonal = 8
 }

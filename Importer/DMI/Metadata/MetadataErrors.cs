@@ -1,9 +1,8 @@
-﻿namespace Importer.DMI.Metadata
+﻿namespace Importer.DMI.Metadata;
+
+public enum MetadataErrors
 {
-    public enum MetadataErrors
-    {
-        Unknown = 0,
-        NoDmiTag,
-        NoVersion
-    }
+    Unknown = 0,
+    NoDmiTag,
+    NoVersion
 }

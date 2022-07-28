@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Importer.DMI.Metadata
+namespace Importer.DMI.Metadata;
+
+public interface IMetadataParser
 {
-    public interface IMetadataParser
-    {
-        bool TryGetFileMetadata(
-            string filePath,
-            [NotNullWhen(true)] out IMetadata? metadata,
-            [NotNullWhen(false)] out ParseError? error);
-    }
+    bool TryGetFileMetadata(
+        string filePath,
+        [NotNullWhen(true)] out IMetadata? metadata,
+        [NotNullWhen(false)] out ParseError? error);
 }

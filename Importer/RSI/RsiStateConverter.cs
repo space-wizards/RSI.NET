@@ -4,90 +4,89 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Importer.Directions;
 
-namespace Importer.RSI
-{
-    public class RsiStateConverter : JsonConverter<RsiState>
-    {
-        public static readonly RsiStateConverter Instance = new();
+namespace Importer.RSI;
 
-        public override RsiState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+public class RsiStateConverter : JsonConverter<RsiState>
+{
+    public static readonly RsiStateConverter Instance = new();
+
+    public override RsiState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        throw new NotSupportedException();
+    }
+
+    public override void Write(Utf8JsonWriter writer, RsiState value, JsonSerializerOptions options)
+    {
+        writer.WriteStartObject();
+
+        writer.WriteString("name", value.Name);
+        var nonDefaultDirection = value.Directions != DirectionType.None;
+        if (nonDefaultDirection)
         {
-            throw new NotSupportedException();
+            writer.WriteNumber("directions", (int)value.Directions);
         }
 
-        public override void Write(Utf8JsonWriter writer, RsiState value, JsonSerializerOptions options)
+        var cleanedDelays = OmitDefaultDelays(value.Delays);
+        if (cleanedDelays is { Count: > 0 })
         {
-            writer.WriteStartObject();
+            writer.WriteStartArray("delays");
 
-            writer.WriteString("name", value.Name);
-            var nonDefaultDirection = value.Directions != DirectionType.None;
-            if (nonDefaultDirection)
+            foreach (var delays in cleanedDelays)
             {
-                writer.WriteNumber("directions", (int)value.Directions);
-            }
+                writer.WriteStartArray();
 
-            var cleanedDelays = OmitDefaultDelays(value.Delays);
-            if (cleanedDelays is { Count: > 0 })
-            {
-                writer.WriteStartArray("delays");
-
-                foreach (var delays in cleanedDelays)
+                foreach (var delay in delays)
                 {
-                    writer.WriteStartArray();
-
-                    foreach (var delay in delays)
-                    {
-                        writer.WriteNumberValue(delay);
-                    }
-
-                    writer.WriteEndArray();
+                    writer.WriteNumberValue(delay);
                 }
 
                 writer.WriteEndArray();
             }
 
-            if (value.Flags is { Count: > 0 })
+            writer.WriteEndArray();
+        }
+
+        if (value.Flags is { Count: > 0 })
+        {
+            writer.WriteStartObject("flags");
+
+            foreach (var kvPair in value.Flags)
             {
-                writer.WriteStartObject("flags");
-
-                foreach (var kvPair in value.Flags)
-                {
-                    writer.WriteString(kvPair.Key.ToString()!, kvPair.Value.ToString());
-                }
-
-                writer.WriteEndObject();
+                writer.WriteString(kvPair.Key.ToString()!, kvPair.Value.ToString());
             }
 
             writer.WriteEndObject();
         }
 
-        private List<List<float>> OmitDefaultDelays(List<List<float>>? valueDelays)
+        writer.WriteEndObject();
+    }
+
+    private List<List<float>> OmitDefaultDelays(List<List<float>>? valueDelays)
+    {
+        var cleanedDelays = new List<List<float>>();
+
+        var allWereEmpty = true;
+        if (valueDelays != null)
         {
-            var cleanedDelays = new List<List<float>>();
-
-            var allWereEmpty = true;
-            if (valueDelays != null)
+            foreach (var delays in valueDelays)
             {
-                foreach (var delays in valueDelays)
+                if (delays.Count != 1 || !delays[0].Equals(1f))
                 {
-                    if (delays.Count != 1 || !delays[0].Equals(1f))
-                    {
-                        allWereEmpty = false;
-                        cleanedDelays.Add(delays);
-                    }
-                    else
-                    {
-                        cleanedDelays.Add(new List<float>());
-                    }
+                    allWereEmpty = false;
+                    cleanedDelays.Add(delays);
                 }
-
-                if (allWereEmpty)
+                else
                 {
-                    return new List<List<float>>();
+                    cleanedDelays.Add(new List<float>());
                 }
             }
 
-            return cleanedDelays;
+            if (allWereEmpty)
+            {
+                return new List<List<float>>();
+            }
         }
+
+        return cleanedDelays;
     }
 }
