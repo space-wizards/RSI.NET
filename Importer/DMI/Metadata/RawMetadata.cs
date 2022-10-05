@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Importer.Directions;
 
 namespace Importer.DMI.Metadata;
@@ -69,9 +70,13 @@ public class RawMetadata
 
     public bool TryVersion([NotNullWhen(true)] out Version? version)
     {
-        if (!TryTuple(out var versionKey, out var versionValue) ||
-            versionKey != "version" ||
-            !double.TryParse(versionValue, out var versionNumber))
+        if (!TryTuple(out var versionKey, out var versionValue) || versionKey != "version")
+        {
+            version = null;
+            return false;
+        }
+
+        if (!double.TryParse(versionValue, NumberStyles.Any, CultureInfo.InvariantCulture, out var versionNumber))
         {
             version = null;
             return false;
@@ -167,7 +172,7 @@ public class RawMetadata
 
                     foreach (var delay in delayString)
                     {
-                        if (!float.TryParse(delay, out var delayNumber))
+                        if (!float.TryParse(delay, NumberStyles.Any, CultureInfo.InvariantCulture, out var delayNumber))
                         {
                             continue;
                         }
