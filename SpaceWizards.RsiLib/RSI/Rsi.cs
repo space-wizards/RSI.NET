@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Importer.RSI;
+namespace SpaceWizards.RsiLib.RSI;
 
 [PublicAPI]
 public class Rsi : IDisposable

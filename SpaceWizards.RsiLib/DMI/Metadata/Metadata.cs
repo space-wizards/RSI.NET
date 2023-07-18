@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Importer.RSI;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SpaceWizards.RsiLib.RSI;
 
-namespace Importer.DMI.Metadata;
+namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 public class Metadata : IMetadata
 {

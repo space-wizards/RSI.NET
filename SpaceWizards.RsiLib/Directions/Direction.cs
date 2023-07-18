@@ -1,4 +1,4 @@
-﻿namespace Importer.Directions;
+﻿namespace SpaceWizards.RsiLib.Directions;
 
 public enum Direction
 {

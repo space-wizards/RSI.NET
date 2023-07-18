@@ -2,12 +2,12 @@
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions.Json;
-using Importer.Directions;
-using Importer.RSI;
+using SpaceWizards.RsiLib.Directions;
+using SpaceWizards.RsiLib.RSI;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace Importer.Tests.RSI;
+namespace SpaceWizards.RsiLib.Tests.RSI;
 
 [TestFixture]
 [TestOf(typeof(Rsi))]

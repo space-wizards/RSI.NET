@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Importer.RSI;
+namespace SpaceWizards.RsiLib.RSI;
 
 public record RsiSize(
     [property: JsonPropertyName("x")] int X,

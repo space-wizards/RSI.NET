@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Importer.DMI.Metadata;
+namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 public interface IMetadataParser
 {

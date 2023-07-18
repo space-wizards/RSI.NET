@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Importer.Directions;
-using Importer.RSI;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SpaceWizards.RsiLib.Directions;
+using SpaceWizards.RsiLib.RSI;
 
-namespace Importer.DMI;
+namespace SpaceWizards.RsiLib.DMI;
 
 public record DmiState(
     string Name,

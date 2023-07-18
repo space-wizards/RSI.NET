@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
-using Importer.Directions;
 using JetBrains.Annotations;
 using Microsoft.Toolkit.Diagnostics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SpaceWizards.RsiLib.Directions;
 
-namespace Importer.RSI;
+namespace SpaceWizards.RsiLib.RSI;
 
 [PublicAPI]
 public class RsiState : IDisposable

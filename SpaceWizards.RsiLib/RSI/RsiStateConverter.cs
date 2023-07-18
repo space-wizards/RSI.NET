@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Importer.Directions;
+using SpaceWizards.RsiLib.Directions;
 
-namespace Importer.RSI;
+namespace SpaceWizards.RsiLib.RSI;
 
 public class RsiStateConverter : JsonConverter<RsiState>
 {

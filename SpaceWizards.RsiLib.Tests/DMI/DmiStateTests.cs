@@ -1,7 +1,7 @@
-﻿using Importer.DMI;
+﻿using SpaceWizards.RsiLib.DMI;
 using NUnit.Framework;
 
-namespace Importer.Tests.DMI;
+namespace SpaceWizards.RsiLib.Tests.DMI;
 
 [TestFixture]
 [TestOf(typeof(DmiState))]

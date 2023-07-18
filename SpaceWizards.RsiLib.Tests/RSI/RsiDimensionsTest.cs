@@ -1,7 +1,7 @@
-﻿using Importer.RSI;
+﻿using SpaceWizards.RsiLib.RSI;
 using NUnit.Framework;
 
-namespace Importer.Tests.RSI;
+namespace SpaceWizards.RsiLib.Tests.RSI;
 
 [TestFixture]
 [TestOf(typeof(RsiState))]
