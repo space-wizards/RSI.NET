@@ -2,7 +2,7 @@
 
 namespace SpaceWizards.RsiLib.RSI;
 
-public record RsiSize(
+public record struct RsiSize(
     [property: JsonPropertyName("x")] int X,
     [property: JsonPropertyName("y")] int Y
 )

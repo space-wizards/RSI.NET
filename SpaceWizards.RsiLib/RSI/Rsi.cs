@@ -3,23 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SpaceWizards.RsiLib.Directions;
 
 namespace SpaceWizards.RsiLib.RSI;
 
 [PublicAPI]
-public class Rsi : IDisposable
+public sealed class Rsi : IDisposable
 {
-    public const double CurrentRsiVersion = 1;
+    public const int CurrentRsiVersion = 1;
 
-    [JsonConstructor]
     public Rsi(
-        double version,
+        int version,
         RsiSize size,
         List<RsiState>? states = null,
         string? license = null,
@@ -33,7 +30,7 @@ public class Rsi : IDisposable
     }
 
     public Rsi(
-        double version = CurrentRsiVersion,
+        int version = CurrentRsiVersion,
         string? license = null,
         string? copyright = null,
         int x = 32,
@@ -43,88 +40,79 @@ public class Rsi : IDisposable
     {
     }
 
-    [JsonPropertyName("version")]
-    public double Version { get; set; }
+    public int Version { get; set; }
 
-    [JsonPropertyName("license")]
     public string? License { get; set; }
 
-    [JsonPropertyName("copyright")]
     public string? Copyright { get; set; }
 
-    [JsonPropertyName("size")]
     public RsiSize Size { get; }
 
-    [JsonPropertyName("states")]
     public List<RsiState> States { get; set; }
 
-    public static async Task<Rsi> FromFolder(
+    public static Rsi FromFolder(
         string rsiFolder,
-        JsonSerializerOptions? options = null,
-        CancellationToken token = default)
+        JsonSerializerOptions? options = null)
     {
-        var metaJsonPath = $"{rsiFolder}{Path.DirectorySeparatorChar}meta.json";
-        await using var metaJsonStream = File.OpenRead(metaJsonPath);
+        var metaJsonPath = Path.Combine(rsiFolder, "meta.json");
+        using var metaJsonStream = File.OpenRead(metaJsonPath);
 
-        return await FromMetaJson(metaJsonStream, options, token);
+        return FromMetaJson(metaJsonStream, options);
     }
 
-    public static async Task<Rsi> FromMetaJson(
+    public static Rsi FromMetaJson(
         Stream metaJson,
-        JsonSerializerOptions? options = null,
-        CancellationToken token = default)
+        JsonSerializerOptions? options = null)
     {
-        var rsi = await JsonSerializer.DeserializeAsync<Rsi>(metaJson, options, token);
+        var rsiData = JsonSerializer.Deserialize(metaJson, RsiJsonSourceGenerationContext.Default.RsiJsonData);
+        if (rsiData == null)
+            throw new JsonException();
 
-        return rsi ?? throw new NullReferenceException();
+        var states = rsiData.States.Select(x => new RsiState(
+                x.Name, x.Directions ?? DirectionType.None, x.Delays?.Select(y => y.ToList()).ToList(), x.Flags, null))
+            .ToList();
+
+        return new Rsi(rsiData.Version, rsiData.Size, states, rsiData.License, rsiData.Copyright);
     }
 
-    public async Task TryLoadFolderImages(string rsiFolder)
+    public void TryLoadFolderImages(string rsiFolder)
     {
         if (!Directory.Exists(rsiFolder))
-        {
             return;
-        }
 
         foreach (var state in States)
         {
-            var fileName = $"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png";
+            var fileName = Path.Combine(rsiFolder, $"{state.Name}.png");
 
             if (!File.Exists(fileName))
             {
                 continue;
             }
 
-            var image = await Image.LoadAsync<Rgba32>(fileName);
+            var image = Image.Load<Rgba32>(fileName);
             state.LoadImage(image, Size);
             state.ImagePath = fileName;
         }
     }
 
-    public async Task SaveToFolder(string rsiFolder, JsonSerializerOptions? options = null)
+    public void SaveToFolder(string rsiFolder)
     {
         Directory.CreateDirectory(rsiFolder);
 
-        await SaveImagesToFolder(rsiFolder);
-        await SaveRsiToFolder(rsiFolder, options);
+        SaveImagesToFolder(rsiFolder);
+        SaveMetadataToFolder(rsiFolder);
     }
-
-    public async Task SaveToStream(Stream stream, JsonSerializerOptions? options = null)
-    {
-        await SaveImagesToStream(stream);
-        await SaveRsiToStream(stream, options);
-    }
-
-    public async Task SaveImagesToFolder(string rsiFolder)
+    
+    public void SaveImagesToFolder(string rsiFolder)
     {
         foreach (var state in States)
         {
             var image = state.GetFullImage(Size);
-            var path = $"{rsiFolder}{Path.DirectorySeparatorChar}{state.Name}.png";
+            var path = Path.Combine(rsiFolder, $"{state.Name}.png");
 
             if (state.ImagePath == null)
             {
-                await image.SaveAsPngAsync(path);
+                image.SaveAsPng(path);
             }
             else if (state.ImagePath != path)
             {
@@ -133,36 +121,34 @@ public class Rsi : IDisposable
         }
     }
 
-    public async Task SaveImagesToStream(Stream stream)
+    public void SaveMetadataToFolder(string rsiFolder)
     {
-        foreach (var state in States)
+        var metaJsonPath = Path.Combine(rsiFolder, "meta.json");
+
+        using var metaJsonFile = File.Create(metaJsonPath);
+        SaveMetadataToStream(metaJsonFile);
+    }
+
+    public void SaveMetadataToStream(Stream stream)
+    {
+        var statesData = States.Select(x =>
         {
-            var image = state.GetFullImage(Size);
-            await image.SaveAsPngAsync(stream);
-        }
+            var state = new RsiStateJsonData(x.Name);
+            if (x.Directions != DirectionType.None)
+                state.Directions = x.Directions;
 
-        await stream.FlushAsync();
-        stream.Seek(0, SeekOrigin.Begin);
-    }
+            var delays = OmitDefaultDelays(x.Delays);
+            if (delays != null) 
+                state.Delays = delays;
 
-    public async Task SaveRsiToFolder(string rsiFolder, JsonSerializerOptions? options = null)
-    {
-        var metaJsonPath = $"{rsiFolder}{Path.DirectorySeparatorChar}meta.json";
-        await File.WriteAllTextAsync(metaJsonPath, string.Empty);
-
-        await using var metaJsonFile = File.OpenWrite(metaJsonPath);
-        await SaveRsiToStream(metaJsonFile, options);
-    }
-
-    public async Task SaveRsiToStream(Stream stream, JsonSerializerOptions? options = null)
-    {
-        options ??= new JsonSerializerOptions();
-        options.Converters.Add(RsiStateConverter.Instance);
-
-        await JsonSerializer.SerializeAsync(stream, this, options);
-        await stream.FlushAsync();
-
-        stream.Seek(0, SeekOrigin.Begin);
+            if (x.Flags is { Count: > 0 })
+                state.Flags = x.Flags;
+            
+            return state;
+        }).ToArray();
+        
+        var data = new RsiJsonData(Version, License, Copyright, Size, statesData);
+        JsonSerializer.Serialize(stream, data);
     }
 
     public void Dispose()
@@ -171,5 +157,33 @@ public class Rsi : IDisposable
         {
             state.Dispose();
         }
+    }
+    
+    private static float[][]? OmitDefaultDelays(List<List<float>>? valueDelays)
+    {
+        if (valueDelays == null)
+            return null;
+        
+        var cleanedDelays = new float[valueDelays.Count][];
+        var allWereEmpty = true;
+
+        for (var i = 0; i < valueDelays.Count; i++)
+        {
+            var srcDelays = valueDelays[i];
+            if (srcDelays is [1f])
+            {
+                cleanedDelays[i] = Array.Empty<float>();
+            }
+            else
+            {
+                cleanedDelays[i] = srcDelays.ToArray();
+                allWereEmpty = false;
+            }
+        }
+
+        if (allWereEmpty)
+            return null;
+
+        return cleanedDelays;
     }
 }
