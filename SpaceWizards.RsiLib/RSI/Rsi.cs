@@ -148,7 +148,7 @@ public sealed class Rsi : IDisposable
         }).ToArray();
         
         var data = new RsiJsonData(Version, License, Copyright, Size, statesData);
-        JsonSerializer.Serialize(stream, data);
+        JsonSerializer.Serialize(stream, data, RsiJsonSourceGenerationContext.Default.RsiJsonData);
     }
 
     public void Dispose()
