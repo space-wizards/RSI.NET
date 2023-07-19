@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using SpaceWizards.RsiLib.Directions;
 
@@ -63,6 +64,8 @@ internal sealed class RsiStateJsonData
 }
 
 [JsonSerializable(typeof(RsiJsonData))]
+// This is to pass through arbitrary JSON data in the flags field.
+[JsonSerializable(typeof(JsonElement))]
 [JsonSourceGenerationOptions(WriteIndented = true)]
 internal sealed partial class RsiJsonSourceGenerationContext : JsonSerializerContext
 {
