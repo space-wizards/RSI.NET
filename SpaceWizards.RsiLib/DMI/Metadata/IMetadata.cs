@@ -1,8 +1,8 @@
-﻿using Importer.RSI;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SpaceWizards.RsiLib.RSI;
 
-namespace Importer.DMI.Metadata;
+namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 public interface IMetadata
 {

@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using FluentAssertions.Json;
-using Importer.Directions;
-using Importer.RSI;
+using SpaceWizards.RsiLib.Directions;
+using SpaceWizards.RsiLib.RSI;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace Importer.Tests.RSI;
+namespace SpaceWizards.RsiLib.Tests.RSI;
 
 [TestFixture]
 [TestOf(typeof(Rsi))]
 public class RsiSaveTest
 {
     [Test]
-    public async Task EmptyIgnoredTest()
+    public void EmptyIgnoredTest()
     {
         var state = new RsiState
         {
@@ -29,9 +28,9 @@ public class RsiSaveTest
         var rsi = new Rsi(states: states);
         var stream = new MemoryStream();
 
-        await rsi.SaveRsiToStream(stream);
-        var json = await new StreamReader(stream).ReadToEndAsync();
-        await stream.DisposeAsync();
+        rsi.SaveMetadataToStream(stream);
+        stream.Position = 0;
+        var json = new StreamReader(stream).ReadToEnd();
 
         Assert.That(json, Is.Not.Empty);
         Assert.That(json, Does.Not.Contain("delays"));
@@ -39,7 +38,7 @@ public class RsiSaveTest
     }
 
     [Test]
-    public async Task NotEmptySerializedTest()
+    public void NotEmptySerializedTest()
     {
         var state = new RsiState
         {
@@ -54,9 +53,9 @@ public class RsiSaveTest
         var rsi = new Rsi(states: states);
         var stream = new MemoryStream();
 
-        await rsi.SaveRsiToStream(stream);
-        var json = await new StreamReader(stream).ReadToEndAsync();
-        await stream.DisposeAsync();
+        rsi.SaveMetadataToStream(stream);
+        stream.Position = 0;
+        var json = new StreamReader(stream).ReadToEnd();
 
         Assert.That(json, Is.Not.Empty);
 
@@ -69,8 +68,10 @@ public class RsiSaveTest
     }
 
     [Test]
-    public async Task ConsistencyTest()
+    public void ConsistencyTest()
     {
+        // TODO: I see no guarantee in the code that multi-key flags dictionaries maintain consistent ordering.
+        
         var state = new RsiState
         {
             Name = "RsiState",
@@ -92,13 +93,11 @@ public class RsiSaveTest
         };
 
         var stream = new MemoryStream();
-        await rsi.SaveRsiToStream(stream);
+        rsi.SaveMetadataToStream(stream);
 
-        var firstJson = await new StreamReader(stream).ReadToEndAsync();
-        stream.Seek(0, SeekOrigin.Begin);
-        rsi = await Rsi.FromMetaJson(stream);
-
-        await stream.DisposeAsync();
+        var firstJson = new StreamReader(stream).ReadToEnd();
+        stream.Position = 0;
+        rsi = Rsi.FromMetaJson(stream);
 
         Assert.That(rsi.Version, Is.EqualTo(5));
         Assert.That(rsi.License, Is.EqualTo("License"));
@@ -121,16 +120,15 @@ public class RsiSaveTest
         Assert.That(state.Flags["Key"].ToString(), Is.EqualTo("Value"));
 
         stream = new MemoryStream();
-        await rsi.SaveRsiToStream(stream);
+        rsi.SaveMetadataToStream(stream);
 
-        var secondJson = await new StreamReader(stream).ReadToEndAsync();
-        await stream.DisposeAsync();
+        var secondJson = new StreamReader(stream).ReadToEnd();
 
         Assert.That(firstJson, Is.EqualTo(secondJson));
     }
 
     [Test]
-    public async Task MinimalJsonTest()
+    public void MinimalJsonTest()
     {
         var rsi = new Rsi(x: 32, y: 32)
         {
@@ -185,10 +183,10 @@ public class RsiSaveTest
         };
 
         var stream = new MemoryStream();
-        await rsi.SaveRsiToStream(stream);
+        rsi.SaveMetadataToStream(stream);
+        stream.Position = 0;
 
-        var json = await new StreamReader(stream).ReadToEndAsync();
-        await stream.DisposeAsync();
+        var json = new StreamReader(stream).ReadToEnd();
 
         var parse = JToken.Parse(json);
 

@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer", "Importer\Importer.csproj", "{2C480F9E-FAEB-4A6C-AB31-426D822D5155}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceWizards.RsiLib", "SpaceWizards.RsiLib\SpaceWizards.RsiLib.csproj", "{2C480F9E-FAEB-4A6C-AB31-426D822D5155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Importer.Tests", "Importer.Tests\Importer.Tests.csproj", "{0F444C64-D873-4088-A1BA-F315A8EFB544}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceWizards.RsiLib.Tests", "SpaceWizards.RsiLib.Tests\SpaceWizards.RsiLib.Tests.csproj", "{0F444C64-D873-4088-A1BA-F315A8EFB544}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

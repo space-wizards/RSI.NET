@@ -1,4 +1,4 @@
-﻿namespace Importer.DMI.Metadata;
+﻿namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 public enum MetadataErrors
 {

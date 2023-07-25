@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Importer.DMI.Metadata;
+namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 [PublicAPI]
 public class ParseError

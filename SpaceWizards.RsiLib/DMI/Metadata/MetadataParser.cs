@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using MetadataExtractor.Formats.Png;
-using static Importer.DMI.Metadata.MetadataErrors;
+using static SpaceWizards.RsiLib.DMI.Metadata.MetadataErrors;
 
-namespace Importer.DMI.Metadata;
+namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 public class MetadataParser : IMetadataParser
 {

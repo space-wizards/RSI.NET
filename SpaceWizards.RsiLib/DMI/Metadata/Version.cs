@@ -1,4 +1,4 @@
-﻿namespace Importer.DMI.Metadata;
+﻿namespace SpaceWizards.RsiLib.DMI.Metadata;
 
 public record Version(double VersionNumber = 0, int Width = -1, int Height = -1)
 {

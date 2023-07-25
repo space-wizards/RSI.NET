@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
-using Importer.Directions;
 using JetBrains.Annotations;
 using Microsoft.Toolkit.Diagnostics;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SpaceWizards.RsiLib.Directions;
 
-namespace Importer.RSI;
+namespace SpaceWizards.RsiLib.RSI;
 
 [PublicAPI]
-public class RsiState : IDisposable
+public sealed class RsiState : IDisposable
 {
     private static readonly char[] InvalidFilenameChars = Path.GetInvalidFileNameChars();
 
@@ -43,7 +42,6 @@ public class RsiState : IDisposable
         Guard.IsEqualTo(Frames.Length, 8 * DelayLength, "Frames.Length");
     }
 
-    [JsonConstructor]
     public RsiState(
         string name,
         DirectionType directions = DirectionType.None,
@@ -58,28 +56,21 @@ public class RsiState : IDisposable
     {
     }
 
-    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonPropertyName("directions")]
     public DirectionType Directions { get; set; }
 
-    [JsonPropertyName("delays")]
     public List<List<float>>? Delays { get; set; }
 
-    [JsonPropertyName("flags")]
     public Dictionary<string, object>? Flags { get; set; }
         
     /// <summary>
     ///     The path of the image to be copied when saving this state.
     /// </summary>
-    [JsonIgnore]
     public string? ImagePath { get; set; }
 
-    [JsonIgnore]
     public int DelayLength { get; private set; }
 
-    [JsonIgnore]
     public Image<Rgba32>?[,] Frames { get; private set; }
 
     public static (int rows, int columns) GetRowsAndColumns(int images)
