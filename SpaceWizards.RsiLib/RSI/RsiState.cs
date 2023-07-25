@@ -170,7 +170,7 @@ public sealed class RsiState : IDisposable
     /// <summary>
     /// Overwrites this RsiState with the specified gif image.
     /// </summary>
-    public void LoadGIF(Image<Rgba32> image, RsiSize size)
+    public void LoadGif(Image<Rgba32> image)
     {
         DelayLength = image.Frames.Count;
         Delays = new List<List<float>> { new() };
