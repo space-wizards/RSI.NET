@@ -167,6 +167,26 @@ public sealed class RsiState : IDisposable
         return frames;
     }
 
+    /// <summary>
+    /// Overwrites this RsiState with the specified gif image.
+    /// </summary>
+    public void LoadGif(Image<Rgba32> image)
+    {
+        DelayLength = image.Frames.Count;
+        Delays = new List<List<float>> { new() };
+        Frames = new Image<Rgba32>[8, DelayLength];
+        
+        for (var frame = 0; frame < DelayLength; frame++)
+        {
+            var frameImage = image.Frames.CloneFrame(frame);
+
+            var frameData = image.Frames[frame].Metadata.GetGifMetadata();
+            // frame delays stored as 10 ms increments hence this.
+            Delays[0].Add(frameData.FrameDelay / 100f);
+            Frames[0, frame] = frameImage;
+        }
+    }
+    
     public void LoadImage(Image<Rgba32> image, RsiSize size)
     {
         var currentX = 0;
