@@ -27,6 +27,7 @@ public sealed class Rsi : IDisposable
         Copyright = copyright;
         Size = size;
         States = states ?? new List<RsiState>();
+        OriginalStateNames = new HashSet<string>(States.Select(s => s.Name));
     }
 
     public Rsi(
@@ -49,6 +50,8 @@ public sealed class Rsi : IDisposable
     public RsiSize Size { get; }
 
     public List<RsiState> States { get; set; }
+
+    public HashSet<string> OriginalStateNames { get; set; }
 
     public static Rsi FromFolder(
         string rsiFolder,
@@ -102,11 +105,13 @@ public sealed class Rsi : IDisposable
         SaveImagesToFolder(rsiFolder);
         SaveMetadataToFolder(rsiFolder);
     }
-    
+
     public void SaveImagesToFolder(string rsiFolder)
     {
         foreach (var state in States)
         {
+            OriginalStateNames.Remove(state.Name);
+
             var image = state.GetFullImage(Size);
             var path = Path.Combine(rsiFolder, $"{state.Name}.png");
 
@@ -119,6 +124,15 @@ public sealed class Rsi : IDisposable
                 File.Copy(state.ImagePath, path, true);
             }
         }
+
+        foreach (var name in OriginalStateNames)
+        {
+            var path = Path.Combine(rsiFolder, $"{name}.png");
+            File.Delete(path);
+        }
+
+        OriginalStateNames.Clear();
+        OriginalStateNames.UnionWith(States.Select(s => s.Name));
     }
 
     public void SaveMetadataToFolder(string rsiFolder)
@@ -138,15 +152,15 @@ public sealed class Rsi : IDisposable
                 state.Directions = x.Directions;
 
             var delays = OmitDefaultDelays(x.Delays);
-            if (delays != null) 
+            if (delays != null)
                 state.Delays = delays;
 
             if (x.Flags is { Count: > 0 })
                 state.Flags = x.Flags;
-            
+
             return state;
         }).ToArray();
-        
+
         var data = new RsiJsonData(Version, License, Copyright, Size, statesData);
         JsonSerializer.Serialize(stream, data, RsiJsonSourceGenerationContext.Default.RsiJsonData);
     }
@@ -158,12 +172,12 @@ public sealed class Rsi : IDisposable
             state.Dispose();
         }
     }
-    
+
     private static float[][]? OmitDefaultDelays(List<List<float>>? valueDelays)
     {
         if (valueDelays == null)
             return null;
-        
+
         var cleanedDelays = new float[valueDelays.Count][];
         var allWereEmpty = true;
 
