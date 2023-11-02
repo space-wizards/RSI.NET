@@ -47,7 +47,7 @@ public sealed class Rsi : IDisposable
 
     public string? Copyright { get; set; }
 
-    public RsiSize Size { get; }
+    public RsiSize Size { get; set; }
 
     public List<RsiState> States { get; set; }
 
