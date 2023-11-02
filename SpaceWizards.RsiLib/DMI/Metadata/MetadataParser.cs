@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using MetadataExtractor.Formats.Png;
 using static SpaceWizards.RsiLib.DMI.Metadata.MetadataErrors;
 
 namespace SpaceWizards.RsiLib.DMI.Metadata;
 
-public class MetadataParser : IMetadataParser
+public class MetadataParser
 {
     private const string Header = "BEGIN DMI";
 
-    private bool TryGetFileDmiTag(string filePath, [NotNullWhen(true)] out RawMetadata? rawData)
+    private bool TryGetFileDmiTag(Stream stream, [NotNullWhen(true)] out RawMetadata? rawData)
     {
-        var data = PngMetadataReader.ReadMetadata(filePath);
+        var data = PngMetadataReader.ReadMetadata(stream);
 
         foreach (var datum in data)
         {
@@ -32,21 +33,21 @@ public class MetadataParser : IMetadataParser
     }
 
     public bool TryGetFileMetadata(
-        string filePath,
+        Stream stream,
         [NotNullWhen(true)] out IMetadata? metadata,
         [NotNullWhen(false)] out ParseError? error)
     {
-        if (!TryGetFileDmiTag(filePath, out var raw))
+        if (!TryGetFileDmiTag(stream, out var raw))
         {
             metadata = null;
-            error = NoDmiTag.WithMessage($"No dmi tag found in file {filePath}");
+            error = NoDmiTag.WithMessage("No dmi tag found");
             return false;
         }
 
         if (!raw.Next() || !raw.TryVersion(out var version))
         {
             metadata = null;
-            error = NoVersion.WithMessage($"No version found in file {filePath}");
+            error = NoVersion.WithMessage("No version found");
             return false;
         }
 
