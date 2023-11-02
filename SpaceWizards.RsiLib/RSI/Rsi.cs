@@ -115,7 +115,7 @@ public sealed class Rsi : IDisposable
             var image = state.GetFullImage(Size);
             var path = Path.Combine(rsiFolder, $"{state.Name}.png");
 
-            if (state.ImagePath == null)
+            if (state.ImagePath == null || !File.Exists(state.ImagePath))
             {
                 image.SaveAsPng(path);
             }

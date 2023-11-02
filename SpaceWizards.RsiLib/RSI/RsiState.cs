@@ -63,7 +63,7 @@ public sealed class RsiState : IDisposable
     public List<List<float>>? Delays { get; set; }
 
     public Dictionary<string, object>? Flags { get; set; }
-        
+
     /// <summary>
     ///     The path of the image to be copied when saving this state.
     /// </summary>
@@ -175,7 +175,7 @@ public sealed class RsiState : IDisposable
         DelayLength = image.Frames.Count;
         Delays = new List<List<float>> { new() };
         Frames = new Image<Rgba32>[8, DelayLength];
-        
+
         for (var frame = 0; frame < DelayLength; frame++)
         {
             var frameImage = image.Frames.CloneFrame(frame);
@@ -186,7 +186,7 @@ public sealed class RsiState : IDisposable
             Frames[0, frame] = frameImage;
         }
     }
-    
+
     public void LoadImage(Image<Rgba32> image, RsiSize size)
     {
         var currentX = 0;
