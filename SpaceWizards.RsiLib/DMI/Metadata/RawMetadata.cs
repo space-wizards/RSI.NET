@@ -196,6 +196,17 @@ public class RawMetadata
             }
         }
 
+        if (state is { Frames: > 1, Delay: null })
+        {
+            var delay = new List<float>();
+            for (var i = 0; i < state.Frames; i++)
+            {
+                delay.Add(0.1f);
+            }
+
+            state = state with { Delay = delay };
+        }
+
         return true;
     }
 }
