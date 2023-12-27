@@ -196,6 +196,8 @@ public class RawMetadata
             }
         }
 
+        // A dmi state may specify how many frames it has but not their delays.
+        // This means a default of 0.1
         if (state is { Frames: > 1, Delay: null })
         {
             var delay = new List<float>();
@@ -205,6 +207,13 @@ public class RawMetadata
             }
 
             state = state with { Delay = delay };
+        }
+
+        // A dmi state may have more delays specified than its frame count
+        // In this case extra delays must be dropped
+        if (state.Delay?.Count > state.Frames)
+        {
+            state.Delay.RemoveRange(state.Frames, state.Delay.Count - state.Frames);
         }
 
         return true;
