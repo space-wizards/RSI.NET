@@ -56,6 +56,16 @@ public sealed class RsiState : IDisposable
     {
     }
 
+    public RsiState(RsiState state) : this(
+        state.Name,
+        state.Directions,
+        state.Delays?.Select(l => l.ToList()).ToList(),
+        state.Flags?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+        state.ImagePath,
+        (Image<Rgba32>[,]?) state.Frames.Clone())
+    {
+    }
+
     public string Name { get; set; }
 
     public DirectionType Directions { get; set; }
