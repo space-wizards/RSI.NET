@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using JetBrains.Annotations;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SpaceWizards.RsiLib.Directions;
+using SpaceWizards.RsiLib.Extensions;
+using static System.StringComparison;
 
 namespace SpaceWizards.RsiLib.RSI;
 
@@ -121,12 +124,35 @@ public sealed class Rsi : IDisposable
             }
             else if (state.ImagePath != path)
             {
-                File.Copy(state.ImagePath, path, true);
+                if (FileExtensions.IsCaseInsensitive() && state.ImagePath.Equals(path, OrdinalIgnoreCase))
+                {
+                    File.Move(state.ImagePath, path, true);
+                }
+                else
+                {
+                    File.Copy(state.ImagePath, path, true);
+                }
             }
         }
 
         foreach (var name in OriginalStateNames)
         {
+            if (FileExtensions.IsCaseInsensitive())
+            {
+                var found = false;
+                foreach (var state in States)
+                {
+                    if (state.Name.Equals(name, OrdinalIgnoreCase))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (found)
+                    continue;
+            }
+
             var path = Path.Combine(rsiFolder, $"{name}.png");
             File.Delete(path);
         }
