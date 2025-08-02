@@ -22,8 +22,8 @@ public class RsiSaveTest
         };
         var states = new List<RsiState>() { state };
 
-        Assert.IsEmpty(states[0].Delays);
-        Assert.IsEmpty(states[0].Flags);
+        Assert.That(states[0].Delays, Is.Empty);
+        Assert.That(states[0].Flags, Is.Empty);
 
         var rsi = new Rsi(states: states);
         var stream = new MemoryStream();
@@ -47,8 +47,8 @@ public class RsiSaveTest
         };
         var states = new List<RsiState>() { state };
 
-        Assert.IsNotEmpty(states[0].Delays);
-        Assert.IsNotEmpty(states[0].Flags);
+        Assert.That(states[0].Delays, Is.Not.Empty);
+        Assert.That(states[0].Flags, Is.Not.Empty);
 
         var rsi = new Rsi(states: states);
         var stream = new MemoryStream();
@@ -81,8 +81,8 @@ public class RsiSaveTest
         };
         var states = new List<RsiState>() { state };
 
-        Assert.IsNotEmpty(states[0].Delays);
-        Assert.IsNotEmpty(states[0].Flags);
+        Assert.That(states[0].Delays, Is.Not.Empty);
+        Assert.That(states[0].Flags, Is.Not.Empty);
 
         var rsi = new Rsi(x: 42, y: 42)
         {
@@ -110,12 +110,12 @@ public class RsiSaveTest
         Assert.That(state.Name, Is.EqualTo("RsiState"));
         Assert.That(state.Directions, Is.EqualTo(DirectionType.Diagonal));
 
-        Assert.NotNull(state.Delays);
+        Assert.That(state.Delays, Is.Not.Null);
         Assert.That(state.Delays!.Count, Is.EqualTo(1));
         Assert.That(state.Delays[0].Count, Is.EqualTo(1));
         Assert.That(state.Delays[0][0], Is.EqualTo(5));
 
-        Assert.NotNull(state.Flags);
+        Assert.That(state.Flags, Is.Not.Null);
         Assert.That(state.Flags!.Count, Is.EqualTo(1));
         Assert.That(state.Flags["Key"].ToString(), Is.EqualTo("Value"));
 
