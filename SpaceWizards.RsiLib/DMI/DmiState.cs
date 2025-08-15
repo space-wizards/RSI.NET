@@ -30,7 +30,7 @@ public record DmiState(
                 var count = delay.Count;
                 for (var i = count - 1; i >= 0; i--)
                 {
-                    delay.Add(i);
+                    delay.Add(delay[i]);
                 }
             }
 
