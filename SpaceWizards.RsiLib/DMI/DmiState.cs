@@ -15,18 +15,28 @@ public record DmiState(
 {
     public static int GetRewindIndex(int currentIndex, int totalFrames)
     {
-        return totalFrames - (currentIndex - totalFrames) - 2;
+        return totalFrames - currentIndex - 1;
     }
 
     public RsiState ToRsiState(Image<Rgba32>[,] frames)
     {
         var delays = new List<List<float>>();
+        var delay = Delay;
 
-        if (Delay != null)
+        if (delay != null)
         {
+            if (Rewind)
+            {
+                var count = delay.Count;
+                for (var i = count - 1; i >= 0; i--)
+                {
+                    delay.Add(i);
+                }
+            }
+
             for (var i = 0; i < (int) Directions; i++)
             {
-                delays.Add(Delay);
+                delays.Add(delay);
             }
         }
 

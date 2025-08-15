@@ -34,6 +34,9 @@ public class Metadata : IMetadata
         foreach (var dmiState in States)
         {
             var frameAmount = dmiState.Delay?.Count ?? 1;
+            if (dmiState.Rewind)
+                frameAmount *= 2;
+
             var images = new Image<Rgba32>[8, frameAmount];
 
             for (var frame = 0; frame < dmiState.Frames; frame++)
@@ -57,11 +60,11 @@ public class Metadata : IMetadata
 
             if (dmiState.Rewind)
             {
-                for (var frame = frameAmount - 1; frame >= dmiState.Frames; frame--)
+                for (var frame = frameAmount - 1; frame >= frameAmount / 2; frame--)
                 {
                     for (var direction = 0; direction < (int) dmiState.Directions; direction++)
                     {
-                        var rewindIndex = DmiState.GetRewindIndex(frame, dmiState.Frames);
+                        var rewindIndex = DmiState.GetRewindIndex(frame, frameAmount);
                         images[direction, frame] = images[direction, rewindIndex].Clone();
                     }
                 }
