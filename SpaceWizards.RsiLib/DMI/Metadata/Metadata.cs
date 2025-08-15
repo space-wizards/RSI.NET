@@ -35,7 +35,7 @@ public class Metadata : IMetadata
         {
             var frameAmount = dmiState.Delay?.Count ?? 1;
             if (dmiState.Rewind)
-                frameAmount *= 2;
+                frameAmount = frameAmount * 2 - 1;
 
             var images = new Image<Rgba32>[8, frameAmount];
 
@@ -60,7 +60,7 @@ public class Metadata : IMetadata
 
             if (dmiState.Rewind)
             {
-                for (var frame = frameAmount - 1; frame >= frameAmount / 2; frame--)
+                for (var frame = frameAmount - 1; frame > frameAmount / 2; frame--)
                 {
                     for (var direction = 0; direction < (int) dmiState.Directions; direction++)
                     {

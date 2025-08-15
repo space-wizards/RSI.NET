@@ -25,10 +25,10 @@ public record DmiState(
 
         if (delay != null)
         {
-            if (Rewind)
+            var count = delay.Count;
+            if (Rewind && count > 1)
             {
-                var count = delay.Count;
-                for (var i = count - 1; i >= 0; i--)
+                for (var i = count - 2; i >= 0; i--)
                 {
                     delay.Add(delay[i]);
                 }
