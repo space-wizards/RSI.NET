@@ -169,7 +169,7 @@ public sealed class Rsi : IDisposable
         SaveMetadataToStream(metaJsonFile);
     }
 
-    public void SaveMetadataToStream(Stream stream)
+    public void SaveMetadataToStream(Stream stream, int indentation = 4)
     {
         var statesData = States.Select(x =>
         {
@@ -188,7 +188,12 @@ public sealed class Rsi : IDisposable
         }).ToArray();
 
         var data = new RsiJsonData(Version, License, Copyright, Size, statesData);
-        JsonSerializer.Serialize(stream, data, RsiJsonSourceGenerationContext.Default.RsiJsonData);
+        JsonSerializer.Serialize(stream, data, new JsonSerializerOptions
+        {
+            TypeInfoResolver = RsiJsonSourceGenerationContext.Default,
+            WriteIndented = true,
+            IndentSize = indentation
+        });
     }
 
     public void Dispose()
